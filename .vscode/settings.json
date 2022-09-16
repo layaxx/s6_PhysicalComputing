@@ -1,0 +1,28 @@
+{
+  "editor.rulers": [80],
+  "editor.wordWrap": "wordWrapColumn",
+  "editor.wordWrapColumn": 80,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/*.aux": true,
+    "**/*.bbl": true,
+    "**/*.bcf": true,
+    "**/*.blg": true,
+    "**/*_temp.tex": true,
+    "**/*.run.xml": true,
+    "**/*.log": true,
+    "**/*.out": true,
+    "**/*.fdb_latexmk": true,
+    "**/*.fls": true,
+    "**/*.synctex*": true
+  },
+  "editor.minimap.autohide": true,
+  "editor.minimap.enabled": false,
+  "latex-workshop.linting.run": "onType",
+  "latex-workshop.texcount.autorun": "onSave"
+}
