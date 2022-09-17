@@ -1,0 +1,12 @@
+\subsection{Arduino}
+\label{subsec:arduino}
+
+As stated previously, the code that controls the arduino is written in C.
+Its purpose is to configure the sensors, monitor them for new data and relay that to the Laptop when available.
+Communication with the MPU6050 sensor happens via the Inter-Integrated Circuit (\IIC) protocol.
+Communication with the laptop uses a serial connection via USB at a BAUD rate of 19200.
+
+
+The main control logic for the micro controller is quite simple. Upon startup, all ports and sensors are configured.
+Then, a infinite loop is started, which relays sensor data to the laptop if a new value is available.
+Availability of new sensor data is determined via interrupts.
