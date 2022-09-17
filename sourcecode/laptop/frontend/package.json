@@ -1,0 +1,23 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.4",
+    "vite": "^3.0.7",
+    "vitest": "^0.23.2"
+  },
+  "dependencies": {
+    "chart.js": "^3.9.1",
+    "chartjs-chart-matrix": "^1.1.1",
+    "dayjs": "^1.11.5"
+  }
+}

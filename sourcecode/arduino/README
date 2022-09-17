@@ -1,0 +1,11 @@
+# SME-Phsy Practice
+
+```bash
+make program && screen /dev/ttyUSB0 19200
+```
+
+or
+
+```bash
+make program && py receiver.py /dev/ttyUSB0 19200
+```
