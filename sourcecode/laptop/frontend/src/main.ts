@@ -1,16 +1,10 @@
 import "./style.css"
 import RingBuffer from "./ringbuffer"
-import {
-  isCorrectRotation,
-  prefixes,
-  rotationThreshold,
-  sdMultiplier,
-} from "./config"
-import { charts, MyLiveChart } from "./charts"
-import { POSITION, StateMachine } from "./state"
-import { Chart } from "chart.js"
-import { MyStaticChart } from "./staticCharts"
+import { prefixes } from "./config"
+import { charts } from "./charts"
+import { StateMachine } from "./state"
 import { determineRotation, evaluateUltraSound, liveplot } from "./handler"
+import { convertToMeters } from "./utils"
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
@@ -41,8 +35,10 @@ document.querySelector("#disconnect")?.addEventListener("click", () => {
   ws?.close()
 })
 
-const USBuffer = new RingBuffer<number[]>(5)
-let data_: Array<number[]> = []
+console.log(convertToMeters(Math.pow(2, 16)))
+
+const USBuffer = new RingBuffer<number>(5)
+let data_: Array<{ x: number; y: number }> = []
 
 let areaUnderCurve = 0
 let state = new StateMachine()
@@ -96,16 +92,17 @@ function connectToWebSocket() {
       case prefixes.US:
         {
           if (numbers[0] > 45000) {
-            console.error("Too high")
+            numbers[0] = 0
+            break
           }
           liveplot(chart, prefix, numbers)
-          /*        evaluateUltraSound(
+          data_ = evaluateUltraSound(
             state,
-            isCorrectRotation(areaUnderCurve),
+            areaUnderCurve,
             USBuffer,
             data_,
             numbers
-          ) */
+          )
         }
         break
       case prefixes.gyro:

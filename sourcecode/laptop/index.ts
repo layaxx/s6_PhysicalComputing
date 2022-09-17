@@ -1,5 +1,5 @@
 import { SerialPort } from "serialport"
-import dayjs, { Dayjs } from "dayjs"
+import dayjs from "dayjs"
 import { ReadlineParser } from "@serialport/parser-readline"
 
 /* WEBSOCKET Config */

@@ -3,6 +3,7 @@ import { isCorrectRotation, sdMultiplier } from "./config"
 import RingBuffer from "./ringbuffer"
 import { POSITION, StateMachine } from "./state"
 import { MyStaticChart } from "./staticCharts"
+import { convertToMeters } from "./utils"
 
 export function liveplot(
   chart: MyLiveChart | undefined,
@@ -16,30 +17,38 @@ export function liveplot(
     })
   }
 
-  chart.addDataPoint(numbers)
+  chart.addDataPoint(numbers.map((num) => convertToMeters(num) * 100))
 }
 
 export function evaluateUltraSound(
   state: StateMachine,
-  isCorrectRotation: boolean,
-  USBuffer: RingBuffer<number[]>,
-  data_: Array<number[]>,
+  areaUnderCurve: number,
+  USBuffer: RingBuffer<number>,
+  data: Array<{ x: number; y: number }>,
   numbers: number[]
 ) {
-  USBuffer.push(numbers)
+  USBuffer.push(numbers[0])
   const { justStartedRotation, justFinishedRotation, isInRotation } = state
 
   if (justStartedRotation) {
-    data_ = [...USBuffer.content] as Array<number[]>
+    data = USBuffer.content.map((value, index) => ({ x: index, y: value }))
   }
   if (isInRotation) {
-    data_.push(numbers)
+    data.push({ x: Math.abs(areaUnderCurve), y: numbers[0] })
   }
-  if (justFinishedRotation && isCorrectRotation) {
-    data_.push(numbers)
-    new MyStaticChart().draw(data_)
+  if (justFinishedRotation && isCorrectRotation(areaUnderCurve)) {
+    data.push({ x: Math.abs(areaUnderCurve), y: numbers[0] })
+    new MyStaticChart().draw(
+      data.map(({ x, y }) => ({
+        x: (x / Math.abs(areaUnderCurve)) * 180,
+        y: convertToMeters(y),
+      }))
+    )
+
     console.log("DETECTION COMPLETED")
+    state.justFinishedRotation = false
   }
+  return data
 }
 
 export function determineRotation(
@@ -80,7 +89,6 @@ export function determineRotation(
 
     if (state.justFinishedRotation) {
       console.log("Detected Rotation")
-      console.log(areaUnderCurve)
       if (isCorrectRotation(areaUnderCurve)) {
         console.log("Detected Correct Rotation")
         console.log({ areaUnderCurve })

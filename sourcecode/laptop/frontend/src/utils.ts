@@ -39,3 +39,8 @@ export function parseToNumber(string: string): {
 
   return { number, set }
 }
+
+export function convertToMeters(count: number) {
+  const time = (count * 8) / 16_000_000
+  return (time * 340) / 2
+}

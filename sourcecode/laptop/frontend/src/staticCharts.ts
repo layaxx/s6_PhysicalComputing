@@ -19,26 +19,22 @@ export class MyStaticChart {
     container?.append(canvas)
   }
 
-  draw(data: Array<number[]>) {
+  draw(data: Array<{ x: number; y: number }>) {
     this.chart.data = {
-      labels: data.map((_, index) => index),
-      datasets: Array(data[0].length)
-        .fill(0)
-        .map((_, idx) => ({
+      datasets: [
+        {
           label: `${this.prefix}, every ${takeEveryNth}th`,
-          data: data.map((array, index) => ({
-            x: index,
-            y: array[idx],
-          })),
-          backgroundColor: colors[idx],
-        })),
+          data,
+          backgroundColor: colors[0],
+        },
+      ],
     }
     this.chart.update("none")
   }
 }
 
 const defaultConfig: ChartConfiguration = {
-  type: "line",
+  type: "scatter",
   data: {
     labels: [],
     datasets: [],

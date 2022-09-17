@@ -7,7 +7,6 @@ import {
   takeEveryNth,
 } from "./config"
 import RingBuffer from "./ringbuffer"
-import { MyStaticChart } from "./staticCharts"
 
 export const charts = new Map<string, MyLiveChart>()
 
