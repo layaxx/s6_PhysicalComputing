@@ -1,7 +1,8 @@
 import { MyLiveChart } from "./charts"
 import { isCorrectRotation, sdMultiplier } from "./config"
-import RingBuffer from "./ringbuffer"
-import { POSITION, StateMachine } from "./state"
+import type RingBuffer from "./ringbuffer"
+import type { StateMachine } from "./state"
+import { POSITION } from "./state"
 import { MyStaticChart } from "./staticCharts"
 import { convertToMeters } from "./utils"
 
@@ -17,25 +18,30 @@ export function liveplot(
     })
   }
 
-  chart.addDataPoint(numbers.map((num) => convertToMeters(num) * 100))
+  chart.addDataPoint(numbers.map((count) => convertToMeters(count) * 100))
 }
 
 export function evaluateUltraSound(
   state: StateMachine,
   areaUnderCurve: number,
-  USBuffer: RingBuffer<number>,
+  ultrasonicBuffer: RingBuffer<number>,
   data: Array<{ x: number; y: number }>,
   numbers: number[]
 ) {
-  USBuffer.push(numbers[0])
+  ultrasonicBuffer.push(numbers[0])
   const { justStartedRotation, justFinishedRotation, isInRotation } = state
 
   if (justStartedRotation) {
-    data = USBuffer.content.map((value, index) => ({ x: index, y: value }))
+    data = ultrasonicBuffer.content.map((value, index) => ({
+      x: index,
+      y: value,
+    }))
   }
+
   if (isInRotation) {
     data.push({ x: Math.abs(areaUnderCurve), y: numbers[0] })
   }
+
   if (justFinishedRotation && isCorrectRotation(areaUnderCurve)) {
     data.push({ x: Math.abs(areaUnderCurve), y: numbers[0] })
     new MyStaticChart().draw(
@@ -48,6 +54,7 @@ export function evaluateUltraSound(
     console.log("DETECTION COMPLETED")
     state.justFinishedRotation = false
   }
+
   return data
 }
 

@@ -3,9 +3,7 @@ import RingBuffer from "./ringbuffer"
 import { prefixes } from "./config"
 import { charts } from "./charts"
 import { StateMachine } from "./state"
-import { determineRotation, evaluateUltraSound, liveplot } from "./handler"
-import { convertToMeters } from "./utils"
-import { MyStaticChart } from "./staticCharts"
+import { determineRotation, evaluateUltraSound } from "./handler"
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
@@ -36,11 +34,11 @@ document.querySelector("#disconnect")?.addEventListener("click", () => {
   ws?.close()
 })
 
-const USBuffer = new RingBuffer<number>(5)
-let data_: Array<{ x: number; y: number }> = []
+const ultrasonicBuffer = new RingBuffer<number>(5)
+let scanData: Array<{ x: number; y: number }> = []
 
 let areaUnderCurve = 0
-let state = new StateMachine()
+const state = new StateMachine()
 
 function connectToWebSocket() {
   const ws = new WebSocket("ws://localhost:8080")
@@ -59,13 +57,14 @@ function connectToWebSocket() {
   })
 
   ws.addEventListener("message", function (event) {
-    if ([...event.data].some((char) => char.charCodeAt(0) > 127)) {
+    const data = String(event.data)
+
+    if ([...data].some((char) => (char.codePointAt(0) ?? 128) > 127)) {
       console.error("Received Non ASCII characters", event.data)
       return
     }
 
     // Convert to Numbers
-    const data = String(event.data)
     const split = data.split(": ")
     const prefix = split.length > 1 ? split[0] : "default"
     const values = split.length > 1 ? split[1] : data
@@ -85,36 +84,35 @@ function connectToWebSocket() {
       return
     }
 
-    let chart = charts.get(prefix)
+    const chart = charts.get(prefix)
 
     switch (prefix) {
       case prefixes.US:
-        {
-          if (numbers[0] > 45000) {
-            numbers[0] = 0
-            break
-          }
-          // liveplot(chart, prefix, numbers)
-          data_ = evaluateUltraSound(
-            state,
-            areaUnderCurve,
-            USBuffer,
-            data_,
-            numbers
-          )
+        if (numbers[0] > 45_000) {
+          numbers[0] = 0
+          break
         }
+
+        // X: liveplot(chart, prefix, numbers)
+        scanData = evaluateUltraSound(
+          state,
+          areaUnderCurve,
+          ultrasonicBuffer,
+          scanData,
+          numbers
+        )
+
         break
       case prefixes.gyro:
-        {
-          areaUnderCurve = determineRotation(chart, state, {
-            prefix,
-            rotationValue: numbers[0],
-            areaUnderCurve,
-          })
-        }
+        areaUnderCurve = determineRotation(chart, state, {
+          prefix,
+          rotationValue: numbers[0],
+          areaUnderCurve,
+        })
+
         break
       default:
-        console.warn("Unknown prefix: ", event.data)
+        console.warn("Unknown prefix:", event.data)
     }
   })
 

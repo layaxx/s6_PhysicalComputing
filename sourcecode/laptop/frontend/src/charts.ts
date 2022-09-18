@@ -1,4 +1,5 @@
-import { ChartConfiguration, LineController } from "chart.js"
+import type { ChartConfiguration } from "chart.js"
+import { LineController } from "chart.js"
 import Chart from "chart.js/auto"
 import {
   bufferSize as bufferSizeDefault,
@@ -10,6 +11,7 @@ import RingBuffer from "./ringbuffer"
 
 export const charts = new Map<string, MyLiveChart>()
 
+// TODO: convert this to plugin
 class Custom extends LineController {
   draw() {
     // Now we can do some custom drawing for this dataset. Here we'll draw a red box around the first point in each dataset
@@ -51,7 +53,7 @@ export class MyLiveChart {
   #buffer: RingBuffer<number[]>
   #states: RingBuffer<number>
   #prefix: string
-  isCalibrated: boolean = false
+  isCalibrated = false
   calibration: Array<{ mean: number; sd: number }> = []
   #shouldCalibrate: boolean
   #averageBuffer: RingBuffer<number[]>
@@ -76,7 +78,7 @@ export class MyLiveChart {
     this.#average = average ?? 1
     this.#bufferSize = bufferSize ?? bufferSizeDefault
 
-    const container = document.getElementById("charts")
+    const container = document.querySelector("#charts")
     const canvas = document.createElement("canvas")
     canvas.setAttribute("id", key)
 
@@ -90,25 +92,24 @@ export class MyLiveChart {
   }
 
   calibrate() {
-    this.calibration = Array(this.#buffer.content[0].length)
-      .fill(0)
-      .map((_, index) => {
-        const array = this.#buffer.content.map((array) => array[index])
-        const mean = array.reduce((a, b) => a + b, 0) / array.length
+    this.calibration = Array.from({
+      length: this.#buffer.content[0].length,
+    }).map((_, index) => {
+      const array = this.#buffer.content.map((array) => array[index])
+      const mean = array.reduce((a, b) => a + b, 0) / array.length
 
-        const sd = Math.sqrt(
-          array.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) /
-            array.length
-        )
+      const sd = Math.sqrt(
+        array.map((x) => (x - mean) ** 2).reduce((a, b) => a + b) / array.length
+      )
 
-        return { mean, sd }
-      })
+      return { mean, sd }
+    })
 
     console.log("Finished Calibration for", this.#prefix)
     this.isCalibrated = true
   }
 
-  addDataPoint(number: number[], state: number = 0, shouldUpdate = true) {
+  addDataPoint(number: number[], state = 0, shouldUpdate = true) {
     if (
       this.#shouldCalibrate &&
       this.#buffer.content.length === this.#buffer.size - 1
@@ -121,16 +122,16 @@ export class MyLiveChart {
       this.#averageBuffer.push(number)
       this.#averageCounter++
       if (this.#averageCounter % this.#average === 0) {
-        const averagedValues = Array(this.#averageBuffer.content[0].length)
-          .fill(0)
-          .map((_, index) => {
-            return (
-              this.#averageBuffer.content.reduce(
-                (prev, curr) => prev + curr[index],
-                0
-              ) / this.#average
-            )
-          })
+        const averagedValues = Array.from({
+          length: this.#averageBuffer.content[0].length,
+        }).map((_, index) => {
+          return (
+            this.#averageBuffer.content.reduce(
+              (previous, curr) => previous + curr[index],
+              0
+            ) / this.#average
+          )
+        })
         this.#buffer.push(averagedValues)
         this.#averageCounter = 1
       }
@@ -138,26 +139,28 @@ export class MyLiveChart {
       this.#buffer.push(number)
       this.#states.push(state)
     }
+
     this.#chart.data = {
       labels: this.#buffer.content.map((_, index) => index),
-      datasets: Array(this.#buffer.content[0]?.length ?? 0)
-        .fill(0)
-        .map((_, idx) => ({
-          label: `${this.#prefix}, every ${takeEveryNth}th`,
-          data: this.#buffer.content.map((array, index) => ({
-            x: index,
-            y: array[idx],
-            color: colors[this.#states.content[index]],
-          })),
-          backgroundColor: (ctx: { raw: { color: any } }) => {
-            return ctx?.raw?.color || colors[idx]
-          },
-          normalized: true,
-          parsing: false,
+      datasets: Array.from({
+        length: this.#buffer.content[0]?.length ?? 0,
+      }).map((_, idx) => ({
+        label: `${this.#prefix}, every ${takeEveryNth}th`,
+        data: this.#buffer.content.map((array, index) => ({
+          x: index,
+          y: array[idx],
+          color: colors[this.#states.content[index]],
         })),
+        backgroundColor(ctx: { raw: any }) {
+          return (ctx?.raw?.color || colors[idx]) as string
+        },
+        normalized: true,
+        parsing: false,
+      })),
       stats: this.isCalibrated ? this.calibration : [],
     }
-    shouldUpdate && this.#chart.update("none")
+
+    if (shouldUpdate) this.#chart.update("none")
   }
 }
 

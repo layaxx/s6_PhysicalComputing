@@ -1,28 +1,28 @@
-import { ChartConfiguration } from "chart.js"
+import type { ChartConfiguration } from "chart.js"
 import Chart from "chart.js/auto"
 import { colors, takeEveryNth } from "./config"
 
 export class MyStaticChart {
   chart: Chart
   prefix: string
-  isCalibrated: boolean = false
+  isCalibrated = false
   calibration: Array<{ mean: number; sd: number }> = []
 
   constructor(key: string = new Date().toISOString()) {
     this.prefix = key
 
-    const container = document.getElementById("charts")
+    const container = document.querySelector("#charts")
     const newContainer = document.createElement("div")
     const button = document.createElement("button")
     button.textContent = "To Base64"
-    newContainer.appendChild(button)
+    newContainer.append(button)
     const canvas = document.createElement("canvas")
     canvas.setAttribute("id", key)
 
     this.chart = new Chart(canvas, defaultConfig)
-    button.addEventListener("click", () =>
+    button.addEventListener("click", () => {
       console.log(this.chart.toBase64Image())
-    )
+    })
     newContainer.append(canvas)
     container?.append(newContainer)
   }
@@ -43,11 +43,11 @@ export class MyStaticChart {
 
 const sections = {
   id: "sections",
-  beforeDraw: (
+  beforeDraw(
     chart: Chart,
     _args: unknown,
     colors: { corners: string; left: string; middle: string; right: string }
-  ) => {
+  ) {
     const { ctx, scales } = chart
     const lengthCorners = 20
     const lengthSections = lengthCorners * 2

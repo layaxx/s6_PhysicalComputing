@@ -7,6 +7,7 @@ export const colors = [
   "brown", // 5 = brown
   "black", // 6 = black
 ]
+
 export const bufferSize = 50
 
 export const prefixes = { gyro: "G", US: "U" }

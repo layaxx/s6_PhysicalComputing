@@ -25,7 +25,8 @@ describe("testing StateMachine", () => {
   })
 
   test("No Rotation when inside", () => {
-    expect(stateMachine.updateState(POSITION.INSIDE)).toEqual(noRotation)
+    stateMachine.updateState(POSITION.INSIDE)
+    expect(stateMachine.state).toEqual(noRotation)
   })
 
   test("start rotation over", () => {

@@ -23,10 +23,10 @@ export function parseToNumber(string: string): {
   set: string
   number: number
 } {
-  let set: string = "default"
+  let prefix = "default"
   if (string.includes(": ")) {
     let rest: string[]
-    ;[set, ...rest] = string.split(": ")
+    ;[prefix, ...rest] = string.split(": ")
     string = rest.join(": ")
   }
 
@@ -37,7 +37,7 @@ export function parseToNumber(string: string): {
     number = 0
   }
 
-  return { number, set }
+  return { number, set: prefix }
 }
 
 export function convertToMeters(count: number) {

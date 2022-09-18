@@ -2,8 +2,8 @@ export default class RingBuffer<T> {
   size: number
   content: T[]
 
-  constructor(size: number) {
-    this.size = size
+  constructor(sizeParameter: number) {
+    this.size = sizeParameter
     this.content = []
   }
 

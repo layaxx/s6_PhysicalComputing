@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import { STATE, thresholdTime } from "./config"
 
 export enum POSITION {
@@ -7,11 +8,11 @@ export enum POSITION {
 }
 export class StateMachine {
   state: STATE = STATE.INSIDE_STEADY
-  counterTime: number = 0
+  counterTime = 0
 
-  justStartedRotation: boolean = false
-  justFinishedRotation: boolean = false
-  isInRotation: boolean = false
+  justStartedRotation = false
+  justFinishedRotation = false
+  isInRotation = false
 
   getState() {
     return {}
@@ -20,8 +21,9 @@ export class StateMachine {
   updateState(position: POSITION): void {
     let hasFinishedRotation = false
     let hasStartedRotation = false
+
     switch (position) {
-      case POSITION.OVER: {
+      case POSITION.OVER:
         switch (this.state) {
           case STATE.OVER_STEADY:
             this.counterTime = Math.max(0, this.counterTime - 1)
@@ -31,12 +33,14 @@ export class StateMachine {
             if (this.counterTime > thresholdTime) {
               this.state = STATE.OVER_STEADY
             }
+
             break
           case STATE.OVER_FALLING:
             this.counterTime = Math.min(this.counterTime + 1, thresholdTime + 1)
             if (this.counterTime > thresholdTime) {
               this.state = STATE.OVER_STEADY
             }
+
             break
           case STATE.INSIDE_STEADY:
             this.counterTime = 1
@@ -47,8 +51,9 @@ export class StateMachine {
             hasFinishedRotation = true
             this.state = STATE.INSIDE_STEADY
         }
+
         break
-      }
+
       case POSITION.UNDER:
         switch (this.state) {
           case STATE.UNDER_STEADY:
@@ -59,12 +64,14 @@ export class StateMachine {
             if (this.counterTime > thresholdTime) {
               this.state = STATE.UNDER_STEADY
             }
+
             break
           case STATE.UNDER_FALLING:
             this.counterTime = Math.min(this.counterTime + 1, thresholdTime + 1)
             if (this.counterTime > thresholdTime) {
               this.state = STATE.UNDER_STEADY
             }
+
             break
           case STATE.INSIDE_STEADY:
             this.counterTime = 1
@@ -75,7 +82,9 @@ export class StateMachine {
             hasFinishedRotation = true
             this.state = STATE.INSIDE_STEADY
         }
+
         break
+
       case POSITION.INSIDE:
         switch (this.state) {
           case STATE.OVER_FALLING:
@@ -85,6 +94,7 @@ export class StateMachine {
               hasFinishedRotation = true
               this.state = STATE.INSIDE_STEADY
             }
+
             break
           case STATE.OVER_RISING:
           case STATE.UNDER_RISING:
@@ -92,6 +102,7 @@ export class StateMachine {
             if (this.counterTime === 0) {
               this.state = STATE.INSIDE_STEADY
             }
+
             break
           case STATE.OVER_STEADY:
             this.counterTime--
@@ -101,7 +112,13 @@ export class StateMachine {
             this.counterTime--
             this.state = STATE.UNDER_FALLING
             break
+          default:
+            console.error("Unknown state")
         }
+
+        break
+      default:
+        console.error("Unknown direction")
     }
 
     this.justFinishedRotation = hasFinishedRotation
