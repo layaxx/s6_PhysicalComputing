@@ -4,6 +4,8 @@
 
 ### Physical Components
 
+Arduino Nano with MPU6050 and HC-SR04, schematic is provided in `paper`
+
 ### Software
 
 - Node.js, preferably current LTS (16.17.0)
@@ -14,7 +16,9 @@
 ## Workflow
 
 - Connect Arduino
-- TODO: replace ports as necessary, default is `/dev/ttyUSB`
+- If your Arduino can not be reached at `/dev/ttyUSB0` you will have to update your path at two places:
+  - `sourcecode/arduino/Makefile`
+  - `sourcecode/laptop/config.json`
 - run `make program` from `sourcecode/arduino`
 - run `yarn` from `sourcecode/laptop` [only necessary once/after changing dependencies]
 - run `yarn start` from `sourcecode/laptop`

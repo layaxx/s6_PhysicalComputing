@@ -1,5 +1,6 @@
 import { SerialPort } from "serialport"
 import { ReadlineParser } from "@serialport/parser-readline"
+import { path, baudRate } from "../config.json"
 
 /* WEBSOCKET Config */
 import WebSocketServer from "ws"
@@ -28,10 +29,8 @@ server.on("connection", (ws) => {
 })
 
 /* Serial Config */
-const port = new SerialPort({
-    path: "/dev/ttyUSB0",
-    baudRate: 250000,
-})
+const port = new SerialPort({ path, baudRate })
+
 
 function handleData(data: any) {
     console.log(

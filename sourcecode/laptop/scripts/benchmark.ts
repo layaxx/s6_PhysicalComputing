@@ -1,12 +1,10 @@
 import { SerialPort } from "serialport"
 import dayjs from "dayjs"
 import { ReadlineParser } from "@serialport/parser-readline"
+import { path, baudRate } from "../config.json"
 
 /* Serial Config */
-const port = new SerialPort({
-  path: "/dev/ttyUSB0",
-  baudRate: 250000,
-})
+const port = new SerialPort({ path, baudRate })
 
 function getValue() {
   const date = dayjs()
