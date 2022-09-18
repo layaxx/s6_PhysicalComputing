@@ -112,8 +112,10 @@ export class StateMachine {
             this.counterTime--
             this.state = STATE.UNDER_FALLING
             break
+          case STATE.INSIDE_STEADY:
+            break
           default:
-            console.error("Unknown state")
+            console.error("Unknown state", this.state)
         }
 
         break

@@ -2,21 +2,6 @@ import { describe, expect, test, beforeEach } from "vitest"
 import { STATE } from "./config"
 import { POSITION, StateMachine } from "./state"
 
-const noRotation = {
-  hasFinishedRotation: false,
-  isInRotation: false,
-}
-
-const activeRotation = {
-  hasFinishedRotation: false,
-  isInRotation: true,
-}
-
-const finishedRotation = {
-  hasFinishedRotation: true,
-  isInRotation: false,
-}
-
 describe("testing StateMachine", () => {
   let stateMachine = new StateMachine()
 
@@ -26,78 +11,88 @@ describe("testing StateMachine", () => {
 
   test("No Rotation when inside", () => {
     stateMachine.updateState(POSITION.INSIDE)
-    expect(stateMachine.state).toEqual(noRotation)
+    expect(stateMachine.state).toBe(STATE.INSIDE_STEADY)
+    expect(stateMachine.isInRotation).toBe(false)
+    expect(stateMachine.justStartedRotation).toBe(false)
+    expect(stateMachine.justFinishedRotation).toBe(false)
   })
 
   test("start rotation over", () => {
-    expect(stateMachine.updateState(POSITION.OVER)).toEqual(activeRotation)
+    stateMachine.updateState(POSITION.OVER)
     expect(stateMachine.state).toBe(STATE.OVER_RISING)
+    expect(stateMachine.isInRotation).toBe(true)
+    expect(stateMachine.justStartedRotation).toBe(true)
   })
 
   test("active rotation over", () => {
     stateMachine.updateState(POSITION.OVER)
     stateMachine.updateState(POSITION.OVER)
     stateMachine.updateState(POSITION.OVER)
-    const result = stateMachine.updateState(POSITION.OVER)
+    stateMachine.updateState(POSITION.OVER)
+    stateMachine.updateState(POSITION.OVER)
+    stateMachine.updateState(POSITION.OVER)
     expect(stateMachine.state).toBe(STATE.OVER_STEADY)
-    expect(result).toEqual(activeRotation)
+    expect(stateMachine.isInRotation).toBe(true)
   })
 
   test("finish rotation over via jump", () => {
-    stateMachine.updateState(POSITION.OVER)
-    stateMachine.updateState(POSITION.OVER)
-    stateMachine.updateState(POSITION.OVER)
-    stateMachine.updateState(POSITION.OVER)
+    stateMachine.state = STATE.OVER_STEADY
+    stateMachine.updateState(POSITION.UNDER)
 
-    expect(stateMachine.updateState(POSITION.UNDER)).toEqual(finishedRotation)
+    expect(stateMachine.justFinishedRotation).toBe(true)
   })
 
   test("finish rotation over", () => {
-    stateMachine.updateState(POSITION.OVER)
-    stateMachine.updateState(POSITION.OVER)
-    stateMachine.updateState(POSITION.OVER)
-    stateMachine.updateState(POSITION.OVER)
+    stateMachine.state = STATE.OVER_STEADY
+    stateMachine.counterTime = 4
 
     stateMachine.updateState(POSITION.INSIDE)
     stateMachine.updateState(POSITION.INSIDE)
     stateMachine.updateState(POSITION.INSIDE)
-    expect(stateMachine.updateState(POSITION.INSIDE)).toEqual(finishedRotation)
+    stateMachine.updateState(POSITION.INSIDE)
+
+    expect(stateMachine.isInRotation).toBe(false)
+    expect(stateMachine.justFinishedRotation).toBe(true)
+    expect(stateMachine.state).toBe(STATE.INSIDE_STEADY)
   })
 
   // Under
-
   test("start rotation under", () => {
-    expect(stateMachine.updateState(POSITION.UNDER)).toEqual(activeRotation)
+    stateMachine.updateState(POSITION.UNDER)
     expect(stateMachine.state).toBe(STATE.UNDER_RISING)
+    expect(stateMachine.isInRotation).toBe(true)
+    expect(stateMachine.justStartedRotation).toBe(true)
   })
 
-  test("active rotation under", () => {
+  test("active rotation over", () => {
     stateMachine.updateState(POSITION.UNDER)
     stateMachine.updateState(POSITION.UNDER)
     stateMachine.updateState(POSITION.UNDER)
-    const result = stateMachine.updateState(POSITION.UNDER)
+    stateMachine.updateState(POSITION.UNDER)
+    stateMachine.updateState(POSITION.UNDER)
+    stateMachine.updateState(POSITION.UNDER)
     expect(stateMachine.state).toBe(STATE.UNDER_STEADY)
-    expect(result).toEqual(activeRotation)
+    expect(stateMachine.isInRotation).toBe(true)
   })
 
-  test("finish rotation under via jump", () => {
-    stateMachine.updateState(POSITION.UNDER)
-    stateMachine.updateState(POSITION.UNDER)
-    stateMachine.updateState(POSITION.UNDER)
-    stateMachine.updateState(POSITION.UNDER)
+  test("finish rotation over via jump", () => {
+    stateMachine.state = STATE.UNDER_STEADY
+    stateMachine.updateState(POSITION.OVER)
 
-    expect(stateMachine.updateState(POSITION.OVER)).toEqual(finishedRotation)
+    expect(stateMachine.justFinishedRotation).toBe(true)
   })
 
-  test("finish rotation under", () => {
-    stateMachine.updateState(POSITION.UNDER)
-    stateMachine.updateState(POSITION.UNDER)
-    stateMachine.updateState(POSITION.UNDER)
-    stateMachine.updateState(POSITION.UNDER)
+  test("finish rotation over", () => {
+    stateMachine.state = STATE.UNDER_STEADY
+    stateMachine.counterTime = 4
 
     stateMachine.updateState(POSITION.INSIDE)
     stateMachine.updateState(POSITION.INSIDE)
     stateMachine.updateState(POSITION.INSIDE)
-    expect(stateMachine.updateState(POSITION.INSIDE)).toEqual(finishedRotation)
+    stateMachine.updateState(POSITION.INSIDE)
+
+    expect(stateMachine.isInRotation).toBe(false)
+    expect(stateMachine.justFinishedRotation).toBe(true)
+    expect(stateMachine.state).toBe(STATE.INSIDE_STEADY)
   })
 })
