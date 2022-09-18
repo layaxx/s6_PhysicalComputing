@@ -11,4 +11,9 @@ Because a webapp cannot directly access the serial port, I wrote a proxy script,
 
 \paragraph{Capturing Ultrasound Data}
 
+\paragraph{Normalizing Data}
+Due in part to the variable update rate, which is discussed in Section \ref{subsec:benchmark}, the captured readings need to be normalized.
+This is done by using the sum of gyroscope readings starting from the beginning of rotation as x-coordinate for the current distance reading.
+The total sum of gyroscope readings for a rotation then corresponds to $180\deg$ and other values can be scaled accordingly.
+
 \paragraph{Evaluating Data}
