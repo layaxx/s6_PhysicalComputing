@@ -98,7 +98,14 @@ int __attribute__((OS_main)) main(void)
 		if (dataReadyUS)
 		{
 			putString("U: ");
-			putDec(dataUS - dataUSPre);
+			if (dataUSPre < dataUS)
+			{
+				putDec(dataUS - dataUSPre);
+			}
+			else
+			{
+				putDec(((1 << 16) - dataUSPre) + dataUS);
+			}
 			putString("\r\n");
 			dataReadyUS = 0;
 			trigger();
@@ -109,7 +116,6 @@ int __attribute__((OS_main)) main(void)
 
 ISR(INT0_vect)
 {
-	// Read Gyro Data
 	dataReadyMPU = 1;
 }
 short justOverflowed = 0;

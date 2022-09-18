@@ -1,17 +1,16 @@
 import { SerialPort } from "serialport"
 import dayjs from "dayjs"
 import { ReadlineParser } from "@serialport/parser-readline"
-import { symlinkSync } from "fs"
 
 /* Serial Config */
 const port = new SerialPort({
   path: "/dev/ttyUSB0",
-  baudRate: 19200,
+  baudRate: 250000,
 })
 
 function getValue() {
   const date = dayjs()
-  return date.hour() * 60 * 24 + date.minute() * 60 + date.second()
+  return date.hour() * 60 * 60 + date.minute() * 60 + date.second()
 }
 
 const nSeconds = 100
@@ -34,9 +33,7 @@ function handleData(data: string) {
 
   obj.freq[timestamp] = obj.freq[timestamp] ? obj.freq[timestamp] + 1 : 1
   const value = Number.parseFloat(data.split(": ")[1].trim())
-  obj.values[timestamp] = obj.values[timestamp]
-    ? obj.values[timestamp] + value
-    : value
+  obj.values.push(value)
 
   if (timestamp > nSeconds) {
     console.log("FINISHED")
@@ -48,14 +45,26 @@ function handleData(data: string) {
       freq.shift()
       freq.pop()
       console.log("Results for " + name)
-      console.log(values, freq)
+      console.log(JSON.stringify(freq))
+      const amount = freq.reduce((a: number, b: number) => a + b, 0)
       console.log(
-        freq.reduce((a: number, b: number) => a + b, 0) / values.length,
+        amount / freq.length,
         " Values per second on average over ",
         freq.length
       )
+      const sum = values.reduce((a: number, b: number) => a + b, 0)
+      const mean = sum / values.length
+      const sd = Math.sqrt(
+        values
+          .map((x: number) => Math.pow(x - mean, 2))
+          .reduce((a: number, b: number) => a + b, 0) / values.length
+      )
+
+      const filtered = values.filter(
+        (number: number) => Math.abs(number - mean) <= sd
+      )
       console.log(
-        values.reduce((a: number, b: number) => a + b, 0) / values.length,
+        filtered.reduce((a: number, b: number) => a + b, 0) / filtered.length,
         " average over ",
         values.length
       )

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "yarn start",
+    "start": "yarn proxy",
     "proxy": "ts-node index.ts",
     "benchmark": "ts-node benchmark.ts"
   },
