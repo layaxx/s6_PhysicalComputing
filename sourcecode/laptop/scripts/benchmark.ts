@@ -32,7 +32,7 @@ function handleData(data: string) {
   }
 
   obj.freq[timestamp] = obj.freq[timestamp] ? obj.freq[timestamp] + 1 : 1
-  const value = Number.parseFloat(data.split(": ")[1].trim())
+  const value = Number.parseFloat((data.split(": ")[1] ?? "-1").trim())
   obj.values.push(value)
 
   if (timestamp > nSeconds) {

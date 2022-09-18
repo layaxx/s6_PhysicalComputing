@@ -1,0 +1,6 @@
+{
+  "name": "do-not-remove",
+  "description": "This is necessary for ts-node to be able to run files in this directory independently",
+  "private": true,
+  "version": "0.0.0"
+}
