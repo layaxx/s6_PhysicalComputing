@@ -34,7 +34,7 @@ const timeOutValue = 5
 /* Serial Config */
 const port = new SerialPort({
   path: "/dev/ttyUSB0",
-  baudRate: 19200,
+  baudRate: 250000,
 })
 
 function handleData(data: any) {

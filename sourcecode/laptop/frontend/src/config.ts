@@ -9,7 +9,7 @@ export const colors = [
 ]
 export const bufferSize = 50
 
-export const prefixes = { gyro: "GyroX", US: "Ultrasound" }
+export const prefixes = { gyro: "G", US: "U" }
 
 export const takeEveryNth = 1 // TODO: not working properly
 

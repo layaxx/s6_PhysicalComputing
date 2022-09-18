@@ -5,6 +5,7 @@ import { charts } from "./charts"
 import { StateMachine } from "./state"
 import { determineRotation, evaluateUltraSound, liveplot } from "./handler"
 import { convertToMeters } from "./utils"
+import { MyStaticChart } from "./staticCharts"
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
@@ -34,8 +35,6 @@ document.querySelector("#reconnect")?.addEventListener("click", () => {
 document.querySelector("#disconnect")?.addEventListener("click", () => {
   ws?.close()
 })
-
-console.log(convertToMeters(Math.pow(2, 16)))
 
 const USBuffer = new RingBuffer<number>(5)
 let data_: Array<{ x: number; y: number }> = []
@@ -95,7 +94,7 @@ function connectToWebSocket() {
             numbers[0] = 0
             break
           }
-          liveplot(chart, prefix, numbers)
+          // liveplot(chart, prefix, numbers)
           data_ = evaluateUltraSound(
             state,
             areaUnderCurve,
