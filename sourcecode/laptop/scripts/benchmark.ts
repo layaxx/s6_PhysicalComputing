@@ -15,7 +15,7 @@ const nSeconds = 100
 
 const map = new Map()
 
-let startValue = getValue()
+const startValue = getValue()
 
 console.log(startValue)
 

@@ -21,11 +21,9 @@ export const rotationThreshold = -500_000
 export const isCorrectRotation = (auc: number) => auc < rotationThreshold
 
 export enum STATE {
-  INSIDE_STEADY,
-  OVER_RISING,
-  OVER_FALLING,
+  INSIDE,
+  OVER,
   OVER_STEADY,
-  UNDER_RISING,
-  UNDER_FALLING,
+  UNDER,
   UNDER_STEADY,
 }

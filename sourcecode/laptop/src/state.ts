@@ -6,125 +6,125 @@ export enum POSITION {
   UNDER,
   INSIDE,
 }
+
 export class StateMachine {
-  state: STATE = STATE.INSIDE_STEADY
+  state: STATE = STATE.INSIDE
   counterTime = 0
 
   justStartedRotation = false
   justFinishedRotation = false
   isInRotation = false
 
-  getState() {
-    return {}
-  }
-
   updateState(position: POSITION): void {
     let hasFinishedRotation = false
     let hasStartedRotation = false
 
-    switch (position) {
-      case POSITION.OVER:
-        switch (this.state) {
-          case STATE.OVER_STEADY:
-            this.counterTime = Math.max(0, this.counterTime - 1)
+    switch (this.state) {
+      case STATE.INSIDE:
+        switch (position) {
+          case POSITION.OVER:
+            this.state = STATE.OVER
+            this.counterTime = 1
+            hasStartedRotation = true
             break
-          case STATE.OVER_RISING:
-            this.counterTime = Math.min(this.counterTime + 1, thresholdTime + 1)
+          case POSITION.UNDER:
+            this.state = STATE.UNDER
+            this.counterTime = 1
+            hasStartedRotation = true
+            break
+          default: // Ignored
+        }
+
+        break
+      case STATE.OVER:
+        switch (position) {
+          case POSITION.OVER:
+            this.counterTime++
             if (this.counterTime > thresholdTime) {
               this.state = STATE.OVER_STEADY
             }
 
             break
-          case STATE.OVER_FALLING:
-            this.counterTime = Math.min(this.counterTime + 1, thresholdTime + 1)
-            if (this.counterTime > thresholdTime) {
-              this.state = STATE.OVER_STEADY
-            }
-
-            break
-          case STATE.INSIDE_STEADY:
-            this.counterTime = 1
-            this.state = STATE.OVER_RISING
-            hasStartedRotation = true
-            break
-          default:
+          case POSITION.UNDER:
+            this.state = STATE.INSIDE
             hasFinishedRotation = true
-            this.state = STATE.INSIDE_STEADY
-        }
-
-        break
-
-      case POSITION.UNDER:
-        switch (this.state) {
-          case STATE.UNDER_STEADY:
-            this.counterTime = Math.max(0, this.counterTime - 1)
             break
-          case STATE.UNDER_RISING:
-            this.counterTime = Math.min(this.counterTime + 1, thresholdTime + 1)
-            if (this.counterTime > thresholdTime) {
-              this.state = STATE.UNDER_STEADY
-            }
-
-            break
-          case STATE.UNDER_FALLING:
-            this.counterTime = Math.min(this.counterTime + 1, thresholdTime + 1)
-            if (this.counterTime > thresholdTime) {
-              this.state = STATE.UNDER_STEADY
-            }
-
-            break
-          case STATE.INSIDE_STEADY:
-            this.counterTime = 1
-            this.state = STATE.UNDER_RISING
-            hasStartedRotation = true
-            break
-          default:
-            hasFinishedRotation = true
-            this.state = STATE.INSIDE_STEADY
-        }
-
-        break
-
-      case POSITION.INSIDE:
-        switch (this.state) {
-          case STATE.OVER_FALLING:
-          case STATE.UNDER_FALLING:
-            this.counterTime = Math.max(0, this.counterTime - 1)
-            if (this.counterTime === 0) {
+          case POSITION.INSIDE:
+            this.counterTime--
+            if (this.counterTime <= 0) {
+              this.state = STATE.INSIDE
               hasFinishedRotation = true
-              this.state = STATE.INSIDE_STEADY
             }
 
             break
-          case STATE.OVER_RISING:
-          case STATE.UNDER_RISING:
-            this.counterTime = Math.max(0, this.counterTime - 1)
-            if (this.counterTime === 0) {
-              this.state = STATE.INSIDE_STEADY
-            }
-
-            break
-          case STATE.OVER_STEADY:
-            this.counterTime--
-            this.state = STATE.OVER_FALLING
-            break
-          case STATE.UNDER_STEADY:
-            this.counterTime--
-            this.state = STATE.UNDER_FALLING
-            break
-          case STATE.INSIDE_STEADY:
-            break
-          default:
-            console.warn("Unknown state", this.state)
+          default: // Ignored
         }
 
         break
+      case STATE.OVER_STEADY:
+        switch (position) {
+          case POSITION.OVER:
+            break
+          case POSITION.UNDER:
+            this.state = STATE.INSIDE
+            hasFinishedRotation = true
+            break
+          case POSITION.INSIDE:
+            this.counterTime--
+            this.state = STATE.OVER
+            break
+          default: // Ignored
+        }
+
+        break
+
+      case STATE.UNDER:
+        switch (position) {
+          case POSITION.OVER:
+            this.state = STATE.INSIDE
+            hasFinishedRotation = true
+            break
+          case POSITION.UNDER:
+            this.counterTime++
+            if (this.counterTime >= thresholdTime) {
+              this.state = STATE.UNDER_STEADY
+            }
+
+            break
+          case POSITION.INSIDE:
+            this.counterTime--
+            if (this.counterTime <= 0) {
+              this.state = STATE.INSIDE
+            }
+
+            hasFinishedRotation = true
+            break
+          default: // Ignored
+        }
+
+        break
+      case STATE.UNDER_STEADY:
+        switch (position) {
+          case POSITION.OVER:
+            this.state = STATE.INSIDE
+            hasFinishedRotation = true
+            break
+          case POSITION.UNDER:
+            break
+          case POSITION.INSIDE:
+            this.counterTime--
+            this.state = STATE.UNDER
+            break
+          default: // Ignored
+        }
+
+        break
+
       default:
-        console.warn("Unknown direction")
     }
 
     this.justFinishedRotation = hasFinishedRotation
     this.justStartedRotation = hasStartedRotation
-    this.isInRotation = this.state !== STATE.INSIDE_STEADY
+    this.isInRotation = this.state !== STATE.INSIDE
   }
 }

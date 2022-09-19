@@ -22,6 +22,8 @@ export function classifyJunction(data: NormalizedScanData): JUNCTION {
 
   // X: else ??
 
+  // Check for invalid measurements (> 400cm)
+
   console.log(data, cornerMeasurement)
 
   return JUNCTION.C
