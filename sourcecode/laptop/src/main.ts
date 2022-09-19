@@ -94,7 +94,7 @@ function connectToWebSocket() {
           break
         }
 
-        liveplot(chart, prefix, numbers)
+        // H liveplot(chart, prefix, numbers)
         scanData = evaluateUltraSound(
           state,
           areaUnderCurve,

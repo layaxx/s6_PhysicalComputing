@@ -1,17 +1,16 @@
 import type { ChartConfiguration } from "chart.js"
-import Chart from "chart.js/auto"
 import {
   bufferSize as bufferSizeDefault,
   colors,
   takeEveryNth,
 } from "../config"
 import RingBuffer from "../ringbuffer"
+import { BaseChart } from "./baseChart"
 import { calibration } from "./plugins/calibration"
 
 export const charts = new Map<string, LiveChart>()
 
-export class LiveChart {
-  #chart: Chart
+export class LiveChart extends BaseChart {
   #buffer: RingBuffer<number[]>
   #states: RingBuffer<number>
   #prefix: string
@@ -35,22 +34,16 @@ export class LiveChart {
       bufferSize?: number
     }
   ) {
+    super(key, defaultConfig)
     this.#prefix = key
     this.#shouldCalibrate = shouldCalibrate ?? false
     this.#average = average ?? 1
     this.#bufferSize = bufferSize ?? bufferSizeDefault
-
-    const container = document.querySelector("#charts")
-    const canvas = document.createElement("canvas")
-    canvas.setAttribute("id", key)
-
     this.#buffer = new RingBuffer(this.#bufferSize)
     this.#averageBuffer = new RingBuffer(this.#average)
     this.#states = new RingBuffer(this.#bufferSize)
-    this.#chart = new Chart(canvas, defaultConfig)
-    charts.set(key, this)
 
-    container?.append(canvas)
+    charts.set(key, this)
   }
 
   calibrate() {
@@ -102,7 +95,7 @@ export class LiveChart {
       this.#states.push(state)
     }
 
-    this.#chart.data = {
+    this.chart.data = {
       labels: this.#buffer.content.map((_, index) => index),
       datasets: Array.from({
         length: this.#buffer.content[0]?.length ?? 0,
@@ -121,19 +114,19 @@ export class LiveChart {
       })),
     }
 
-    if (this.#chart.options.plugins) {
-      this.#chart.options.plugins.calibration = {
+    if (this.chart.options.plugins) {
+      this.chart.options.plugins.calibration = {
         stats: this.isCalibrated ? this.calibration : [],
       }
     } else {
-      this.#chart.options.plugins = {
+      this.chart.options.plugins = {
         calibration: {
           stats: this.isCalibrated ? this.calibration : [],
         },
       }
     }
 
-    if (shouldUpdate) this.#chart.update("none")
+    if (shouldUpdate) this.chart.update("none")
   }
 }
 

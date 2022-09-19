@@ -4,10 +4,13 @@ import { colors, takeEveryNth } from "../config"
 import { sections } from "./plugins/sections"
 
 export class BaseChart {
-  #chart: Chart
   prefix: string
+  protected chart: Chart
 
-  constructor(key: string = new Date().toISOString()) {
+  constructor(
+    key: string = new Date().toISOString(),
+    config: ChartConfiguration = defaultConfig
+  ) {
     this.prefix = key
 
     const container = document.querySelector("#charts")
@@ -18,16 +21,16 @@ export class BaseChart {
     const canvas = document.createElement("canvas")
     canvas.setAttribute("id", key)
 
-    this.#chart = new Chart(canvas, defaultConfig)
+    this.chart = new Chart(canvas, defaultConfig)
     button.addEventListener("click", () => {
-      console.log(this.#chart.toBase64Image())
+      console.log(this.chart.toBase64Image())
     })
     newContainer.append(canvas)
     container?.append(newContainer)
   }
 
   draw(data: Array<{ x: number; y: number }>) {
-    this.#chart.data = {
+    this.chart.data = {
       datasets: [
         {
           label: `${this.prefix}, every ${takeEveryNth}th`,
@@ -36,7 +39,7 @@ export class BaseChart {
         },
       ],
     }
-    this.#chart.update("none")
+    this.chart.update("none")
   }
 }
 
