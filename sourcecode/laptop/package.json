@@ -33,6 +33,9 @@
   },
   "xo": {
     "prettier": true,
+    "ignores": [
+      "src/vite-env.d.ts"
+    ],
     "rules": {
       "@typescript-eslint/consistent-type-assertions": "off",
       "eslint-comments/no-unused-disable": "off",

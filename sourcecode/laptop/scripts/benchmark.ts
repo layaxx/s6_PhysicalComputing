@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { SerialPort } from "serialport"
 import dayjs from "dayjs"
 import { ReadlineParser } from "@serialport/parser-readline"
@@ -13,7 +14,7 @@ function getValue() {
 
 const nSeconds = 100
 
-const map = new Map()
+const map = new Map<string, { freq: number[]; values: number[] }>()
 
 const startValue = getValue()
 
@@ -22,16 +23,18 @@ console.log(startValue)
 function handleData(data: string) {
   const timestamp = getValue() - startValue
 
-  const prefix = data.split(": ")[0]
-  let obj = map.get(prefix)
-  if (!obj) {
-    obj = { freq: [], values: [] }
-    map.set(prefix, obj)
+  const prefix = data.split(": ")[0] ?? "default"
+  let object = map.get(prefix)
+
+  if (!object) {
+    object = { freq: [], values: [] }
+    map.set(prefix, object)
   }
 
-  obj.freq[timestamp] = obj.freq[timestamp] ? obj.freq[timestamp] + 1 : 1
+  object.freq[timestamp] = (object.freq[timestamp] ?? 0) + 1
+
   const value = Number.parseFloat((data.split(": ")[1] ?? "-1").trim())
-  obj.values.push(value)
+  object.values.push(value)
 
   if (timestamp > nSeconds) {
     console.log("FINISHED")
@@ -47,14 +50,14 @@ function handleData(data: string) {
       const amount = freq.reduce((a: number, b: number) => a + b, 0)
       console.log(
         amount / freq.length,
-        " Values per second on average over ",
+        "Values per second on average over",
         freq.length
       )
       const sum = values.reduce((a: number, b: number) => a + b, 0)
       const mean = sum / values.length
       const sd = Math.sqrt(
         values
-          .map((x: number) => Math.pow(x - mean, 2))
+          .map((x: number) => (x - mean) ** 2)
           .reduce((a: number, b: number) => a + b, 0) / values.length
       )
 
@@ -63,11 +66,13 @@ function handleData(data: string) {
       )
       console.log(
         filtered.reduce((a: number, b: number) => a + b, 0) / filtered.length,
-        " average over ",
+        "average over",
         values.length
       )
     }
-    process.exit()
+
+    // eslint-disable-next-line n/prefer-global/process
+    global.process.exit()
   }
 }
 
@@ -75,11 +80,13 @@ const parser = port.pipe(new ReadlineParser({ delimiter: "\r\n" }))
 parser.on("data", handleData)
 parser.on("error", console.error)
 
-port.on("error", function (err) {
-  console.log("Error: ", err.message)
+port.on("error", function (error) {
+  console.log("Error:", error.message)
 })
 
-port.on("end", () => console.log("Connection ended"))
+port.on("end", () => {
+  console.log("Connection ended")
+})
 
 setInterval(() => {
   if (!port.opening && !port.isOpen) {
