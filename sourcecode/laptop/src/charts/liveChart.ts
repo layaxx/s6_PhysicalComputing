@@ -5,6 +5,7 @@ import {
   takeEveryNth,
 } from "../config"
 import RingBuffer from "../ringbuffer"
+import { getAverage, getStandardDeviation } from "../utils"
 import { BaseChart } from "./baseChart"
 import { calibration } from "./plugins/calibration"
 
@@ -51,11 +52,9 @@ export class LiveChart extends BaseChart {
       length: this.#buffer.content[0].length,
     }).map((_, index) => {
       const array = this.#buffer.content.map((array) => array[index])
-      const mean = array.reduce((a, b) => a + b, 0) / array.length
 
-      const sd = Math.sqrt(
-        array.map((x) => (x - mean) ** 2).reduce((a, b) => a + b) / array.length
-      )
+      const mean = getAverage(array)
+      const sd = getStandardDeviation(array, mean)
 
       return { mean, sd }
     })

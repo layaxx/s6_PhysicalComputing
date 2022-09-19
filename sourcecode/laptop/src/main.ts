@@ -2,7 +2,7 @@ import "./style.css"
 import RingBuffer from "./ringbuffer"
 import { prefixes } from "./config"
 import { StateMachine } from "./state"
-import { determineRotation, evaluateUltraSound, liveplot } from "./handler"
+import { determineRotation, evaluateUltraSound } from "./handler"
 import { charts } from "./charts/liveChart"
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
@@ -57,6 +57,8 @@ function connectToWebSocket() {
     element.classList.add("disconnected")
   })
 
+  let justReceivedGyroData = false
+
   ws.addEventListener("message", function (event) {
     const data = String(event.data)
 
@@ -89,8 +91,9 @@ function connectToWebSocket() {
 
     switch (prefix) {
       case prefixes.US:
-        if (numbers[0] > 45_000) {
-          numbers[0] = 0
+        if (justReceivedGyroData) {
+          // These values are not reliable, need to either be removed or replaced with an average of value before/after
+          justReceivedGyroData = false
           break
         }
 
@@ -104,12 +107,15 @@ function connectToWebSocket() {
         )
 
         break
+
       case prefixes.gyro:
         areaUnderCurve = determineRotation(chart, state, {
           prefix,
           rotationValue: numbers[0],
           areaUnderCurve,
         })
+
+        justReceivedGyroData = true
 
         break
       default:

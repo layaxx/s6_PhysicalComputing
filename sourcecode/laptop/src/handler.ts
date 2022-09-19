@@ -1,5 +1,6 @@
 import { BaseChart } from "./charts/baseChart"
 import { LiveChart } from "./charts/liveChart"
+import { classifyJunction } from "./classification"
 import { isCorrectRotation, sdMultiplier } from "./config"
 import type RingBuffer from "./ringbuffer"
 import type { StateMachine } from "./state"
@@ -44,14 +45,15 @@ export function evaluateUltraSound(
 
   if (justFinishedRotation && isCorrectRotation(areaUnderCurve)) {
     data.push({ x: Math.abs(areaUnderCurve), y: numbers[0] })
-    new BaseChart().draw(
-      data.map(({ x, y }) => ({
-        x: (x / Math.abs(areaUnderCurve)) * 180,
-        y: convertToMeters(y),
-      }))
-    )
+    const normalizedData = data.map(({ x, y }) => ({
+      x: (x / Math.abs(areaUnderCurve)) * 180,
+      y: convertToMeters(y),
+    }))
+    new BaseChart().draw(normalizedData)
 
     console.log("DETECTION COMPLETED")
+
+    console.log(classifyJunction(normalizedData))
     state.justFinishedRotation = false
   }
 

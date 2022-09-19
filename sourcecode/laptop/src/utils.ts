@@ -44,3 +44,44 @@ export function convertToMeters(count: number) {
   const time = (count * 8) / 16_000_000
   return (time * 340) / 2
 }
+
+export function convertToCentimeters(count: number) {
+  return convertToMeters(count) * 100
+}
+
+export function getAverage(data: number[]) {
+  return data.length > 0 ? getSum(data) / data.length : 0
+}
+
+export function getAverageWithoutOutliers(
+  data: number[],
+  stats?: { sd: number; mean: number; factor?: number }
+) {
+  let sd = stats?.sd
+  let mean = stats?.mean
+  if (stats === undefined) {
+    mean = getAverage(data)
+    sd = getStandardDeviation(data, mean)
+  }
+
+  const factor = stats?.factor ?? 2
+
+  return getAverage(
+    data.filter((datum) => Math.abs(datum - mean!) < sd! * factor)
+  )
+}
+
+export function getSum(data: number[]) {
+  return data.reduce((a, b) => a + b, 0)
+}
+
+export function getStandardDeviation(data: number[], mean?: number) {
+  if (mean === undefined) {
+    mean = getAverage(data)
+  }
+
+  return Math.sqrt(
+    data.map((datum) => (datum - mean!) ** 2).reduce((a, b) => a + b) /
+      data.length
+  )
+}

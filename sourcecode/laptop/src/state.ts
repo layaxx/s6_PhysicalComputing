@@ -115,12 +115,12 @@ export class StateMachine {
           case STATE.INSIDE_STEADY:
             break
           default:
-            console.error("Unknown state", this.state)
+            console.warn("Unknown state", this.state)
         }
 
         break
       default:
-        console.error("Unknown direction")
+        console.warn("Unknown direction")
     }
 
     this.justFinishedRotation = hasFinishedRotation
