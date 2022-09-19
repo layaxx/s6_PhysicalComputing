@@ -1,18 +1,18 @@
-import { MyLiveChart } from "./charts"
+import { BaseChart } from "./charts/baseChart"
+import { LiveChart } from "./charts/liveChart"
 import { isCorrectRotation, sdMultiplier } from "./config"
 import type RingBuffer from "./ringbuffer"
 import type { StateMachine } from "./state"
 import { POSITION } from "./state"
-import { MyStaticChart } from "./staticCharts"
 import { convertToMeters } from "./utils"
 
 export function liveplot(
-  chart: MyLiveChart | undefined,
+  chart: LiveChart | undefined,
   prefix: string,
   numbers: number[]
 ) {
   if (!chart) {
-    chart = new MyLiveChart(prefix, {
+    chart = new LiveChart(prefix, {
       average: 100,
       bufferSize: 10,
     })
@@ -44,7 +44,7 @@ export function evaluateUltraSound(
 
   if (justFinishedRotation && isCorrectRotation(areaUnderCurve)) {
     data.push({ x: Math.abs(areaUnderCurve), y: numbers[0] })
-    new MyStaticChart().draw(
+    new BaseChart().draw(
       data.map(({ x, y }) => ({
         x: (x / Math.abs(areaUnderCurve)) * 180,
         y: convertToMeters(y),
@@ -59,7 +59,7 @@ export function evaluateUltraSound(
 }
 
 export function determineRotation(
-  chart: MyLiveChart | undefined,
+  chart: LiveChart | undefined,
   state: StateMachine,
   {
     prefix,
@@ -68,7 +68,7 @@ export function determineRotation(
   }: { prefix: string; rotationValue: number; areaUnderCurve: number }
 ): number {
   if (!chart) {
-    chart = new MyLiveChart(prefix, {
+    chart = new LiveChart(prefix, {
       shouldCalibrate: true,
     })
   }

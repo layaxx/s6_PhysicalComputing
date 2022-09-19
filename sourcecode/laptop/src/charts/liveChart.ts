@@ -1,54 +1,16 @@
 import type { ChartConfiguration } from "chart.js"
-import { LineController } from "chart.js"
 import Chart from "chart.js/auto"
 import {
   bufferSize as bufferSizeDefault,
   colors,
-  sdMultiplier,
   takeEveryNth,
-} from "./config"
-import RingBuffer from "./ringbuffer"
+} from "../config"
+import RingBuffer from "../ringbuffer"
+import { calibration } from "./plugins/calibration"
 
-export const charts = new Map<string, MyLiveChart>()
+export const charts = new Map<string, LiveChart>()
 
-// TODO: convert this to plugin
-class Custom extends LineController {
-  draw() {
-    // Now we can do some custom drawing for this dataset. Here we'll draw a red box around the first point in each dataset
-    const meta = this.getMeta()
-    const stats: Array<{ mean: number; sd: number }> =
-      this.chart.data.stats ?? []
-    const ctx = this.chart.ctx
-
-    ctx.save()
-    stats.forEach(({ mean, sd }, index) => {
-      const meanPixel = meta.yScale?.getPixelForValue(mean) ?? 5
-      const sdUpperPixel =
-        meta.yScale?.getPixelForValue(mean + sdMultiplier * sd) ?? 5
-      const sdLowerPixel =
-        meta.yScale?.getPixelForValue(mean - sdMultiplier * sd) ?? 5
-
-      ctx.strokeStyle = colors[index]
-      ctx.lineWidth = 2
-      ctx.strokeRect(0, meanPixel, this.chart.width, 0)
-
-      ctx.strokeStyle = colors[index]
-      ctx.lineWidth = 1
-      ctx.strokeRect(0, sdUpperPixel, this.chart.width, 0)
-      ctx.strokeRect(0, sdLowerPixel, this.chart.width, 0)
-    })
-    ctx.restore()
-
-    super.draw()
-  }
-}
-Custom.id = "derivedLine"
-Custom.defaults = LineController.defaults
-
-// Stores the controller so that the chart initialization routine can look it up
-Chart.register(Custom)
-
-export class MyLiveChart {
+export class LiveChart {
   #chart: Chart
   #buffer: RingBuffer<number[]>
   #states: RingBuffer<number>
@@ -157,7 +119,18 @@ export class MyLiveChart {
         normalized: true,
         parsing: false,
       })),
-      stats: this.isCalibrated ? this.calibration : [],
+    }
+
+    if (this.#chart.options.plugins) {
+      this.#chart.options.plugins.calibration = {
+        stats: this.isCalibrated ? this.calibration : [],
+      }
+    } else {
+      this.#chart.options.plugins = {
+        calibration: {
+          stats: this.isCalibrated ? this.calibration : [],
+        },
+      }
     }
 
     if (shouldUpdate) this.#chart.update("none")
@@ -165,12 +138,13 @@ export class MyLiveChart {
 }
 
 const defaultConfig: ChartConfiguration = {
-  type: "derivedLine",
+  type: "line",
   data: {
     labels: [],
     datasets: [],
   },
   options: {
+    plugins: {},
     scales: {
       x: {
         ticks: { minRotation: 0, maxRotation: 0, sampleSize: 1 },
@@ -181,4 +155,5 @@ const defaultConfig: ChartConfiguration = {
     },
     animation: false,
   },
+  plugins: [calibration],
 }

@@ -1,13 +1,14 @@
 import "./style.css"
 import RingBuffer from "./ringbuffer"
 import { prefixes } from "./config"
-import { charts } from "./charts"
 import { StateMachine } from "./state"
-import { determineRotation, evaluateUltraSound } from "./handler"
+import { determineRotation, evaluateUltraSound, liveplot } from "./handler"
+import { charts } from "./charts/liveChart"
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
-    <h1>Serial Plotter</h1>
+    <h1>Paths in a Labyrinth</h1>
+    <h2>Junction Classification</h2>
     <div>
       <h2>Connection Status:</h2>
       <p id="connection-status">not connected</p>
@@ -93,7 +94,7 @@ function connectToWebSocket() {
           break
         }
 
-        // X: liveplot(chart, prefix, numbers)
+        liveplot(chart, prefix, numbers)
         scanData = evaluateUltraSound(
           state,
           areaUnderCurve,

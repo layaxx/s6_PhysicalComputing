@@ -3,5 +3,10 @@
   "files.associations": {
     "io.h": "c",
     "i2c.h": "c"
+  },
+  "files.exclude": {
+    "**/*.elf": true,
+    "**/*.hex": true,
+    "**/*.o": true
   }
 }
