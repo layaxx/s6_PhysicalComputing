@@ -29,7 +29,7 @@ server.on("connection", (ws) => {
 })
 
 /* Serial Config */
-const port = new SerialPort({ path, baudRate })
+const serialPort = new SerialPort({ path, baudRate })
 
 function handleData(data: string) {
   console.log(
@@ -40,21 +40,29 @@ function handleData(data: string) {
   })
 }
 
-const parser = port.pipe(new ReadlineParser({ delimiter: "\r\n" }))
+const parser = serialPort.pipe(new ReadlineParser({ delimiter: "\r\n" }))
 parser.on("data", handleData)
 parser.on("error", console.error)
 
-port.on("error", function (error) {
+serialPort.on("error", function (error) {
   console.log("Error:", error.message)
 })
 
-port.on("end", () => {
+serialPort.on("end", () => {
   console.log("Connection ended")
 })
 
 setInterval(() => {
-  if (!port.opening && !port.isOpen) {
+  if (!serialPort.opening && !serialPort.isOpen) {
     console.error("timeout detected")
-    port.open()
+
+    serialPort.open((error) => {
+      if (error) {
+        activeConnections.forEach((ws) => {
+          ws.send(`Debug: Timeout: ${error?.message}`)
+        })
+        console.error(error)
+      }
+    })
   }
 }, 1000)

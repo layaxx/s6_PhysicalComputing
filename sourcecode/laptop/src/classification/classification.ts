@@ -1,4 +1,4 @@
-import { getAverageWithoutOutliers } from "./utils"
+import { getAverageWithoutOutliers } from "../utils"
 
 export enum JUNCTION {
   X, // X Junction

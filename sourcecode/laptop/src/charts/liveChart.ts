@@ -5,7 +5,6 @@ import {
   takeEveryNth,
 } from "../config"
 import RingBuffer from "../ringbuffer"
-import { getAverage, getStandardDeviation } from "../utils"
 import { BaseChart } from "./baseChart"
 import { calibration } from "./plugins/calibration"
 
@@ -17,7 +16,6 @@ export class LiveChart extends BaseChart {
   #prefix: string
   isCalibrated = false
   calibration: Array<{ mean: number; sd: number }> = []
-  #shouldCalibrate: boolean
   #averageBuffer: RingBuffer<number[]>
   #average: number
   #averageCounter = 0
@@ -35,9 +33,8 @@ export class LiveChart extends BaseChart {
       bufferSize?: number
     }
   ) {
-    super(key, defaultConfig)
+    super(key, getDefaultConfig(shouldCalibrate))
     this.#prefix = key
-    this.#shouldCalibrate = shouldCalibrate ?? false
     this.#average = average ?? 1
     this.#bufferSize = bufferSize ?? bufferSizeDefault
     this.#buffer = new RingBuffer(this.#bufferSize)
@@ -47,31 +44,12 @@ export class LiveChart extends BaseChart {
     charts.set(key, this)
   }
 
-  calibrate() {
-    this.calibration = Array.from({
-      length: this.#buffer.content[0].length,
-    }).map((_, index) => {
-      const array = this.#buffer.content.map((array) => array[index])
-
-      const mean = getAverage(array)
-      const sd = getStandardDeviation(array, mean)
-
-      return { mean, sd }
-    })
-
-    console.log("Finished Calibration for", this.#prefix)
+  calibrate(calibration: Array<{ mean: number; sd: number }>) {
+    this.calibration = calibration
     this.isCalibrated = true
   }
 
   addDataPoint(number: number[], state = 0, shouldUpdate = true) {
-    if (
-      this.#shouldCalibrate &&
-      this.#buffer.content.length === this.#buffer.size - 1
-    ) {
-      // Calibrate
-      this.calibrate()
-    }
-
     if (this.#average > 1) {
       this.#averageBuffer.push(number)
       this.#averageCounter++
@@ -129,23 +107,25 @@ export class LiveChart extends BaseChart {
   }
 }
 
-const defaultConfig: ChartConfiguration = {
-  type: "line",
-  data: {
-    labels: [],
-    datasets: [],
-  },
-  options: {
-    plugins: {},
-    scales: {
-      x: {
-        ticks: { minRotation: 0, maxRotation: 0, sampleSize: 1 },
-        min: 0,
-        max: 50,
-      },
-      y: { ticks: { minRotation: 0, maxRotation: 0, sampleSize: 1 } },
+const getDefaultConfig = (shouldCalibrate = false): ChartConfiguration => {
+  return {
+    type: "line",
+    data: {
+      labels: [],
+      datasets: [],
     },
-    animation: false,
-  },
-  plugins: [calibration],
+    options: {
+      plugins: {},
+      scales: {
+        x: {
+          ticks: { minRotation: 0, maxRotation: 0, sampleSize: 1 },
+          min: 0,
+          max: 50,
+        },
+        y: { ticks: { minRotation: 0, maxRotation: 0, sampleSize: 1 } },
+      },
+      animation: false,
+    },
+    plugins: shouldCalibrate ? [calibration] : [],
+  }
 }

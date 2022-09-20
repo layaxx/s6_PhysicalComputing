@@ -1,11 +1,11 @@
 import { BaseChart } from "./charts/baseChart"
+import { classifyJunction } from "./classification/classification"
 import { LiveChart } from "./charts/liveChart"
-import { classifyJunction } from "./classification"
-import { isCorrectRotation, sdMultiplier } from "./config"
+import { isCorrectRotation } from "./config"
 import type RingBuffer from "./ringbuffer"
 import type { StateMachine } from "./state"
-import { POSITION } from "./state"
 import { convertToMeters } from "./utils"
+import type { RotationClassifier } from "./classification/classifyRotation"
 
 export function liveplot(
   chart: LiveChart | undefined,
@@ -61,55 +61,8 @@ export function evaluateUltraSound(
 }
 
 export function determineRotation(
-  chart: LiveChart | undefined,
-  state: StateMachine,
-  {
-    prefix,
-    rotationValue,
-    areaUnderCurve,
-  }: { prefix: string; rotationValue: number; areaUnderCurve: number }
-): number {
-  if (!chart) {
-    chart = new LiveChart(prefix, {
-      shouldCalibrate: true,
-    })
-  }
-
-  if (chart.isCalibrated) {
-    const { mean, sd } = chart.calibration[0]
-
-    const upperBound = mean + sdMultiplier * sd
-    const lowerBound = mean - sdMultiplier * sd
-
-    const position =
-      rotationValue > upperBound
-        ? POSITION.OVER
-        : rotationValue < lowerBound
-        ? POSITION.UNDER
-        : POSITION.INSIDE
-    state.updateState(position)
-    if (state.justStartedRotation) {
-      areaUnderCurve = rotationValue
-    }
-
-    if (state.isInRotation) {
-      areaUnderCurve += rotationValue
-    }
-
-    if (state.justFinishedRotation) {
-      console.log("Detected Rotation")
-      if (isCorrectRotation(areaUnderCurve)) {
-        console.log("Detected Correct Rotation")
-        console.log({ areaUnderCurve })
-      }
-    }
-  }
-
-  chart.addDataPoint(
-    [rotationValue],
-    chart.isCalibrated ? state.state : undefined,
-    false
-  )
-
-  return areaUnderCurve
+  classifier: RotationClassifier,
+  rotationValue: number
+) {
+  return classifier.addDatapoint(rotationValue)
 }

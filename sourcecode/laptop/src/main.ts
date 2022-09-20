@@ -1,9 +1,9 @@
 import "./style.css"
 import RingBuffer from "./ringbuffer"
 import { prefixes } from "./config"
-import { StateMachine } from "./state"
 import { determineRotation, evaluateUltraSound } from "./handler"
 import { charts } from "./charts/liveChart"
+import { RotationClassifier } from "./classification/classifyRotation"
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
@@ -15,9 +15,9 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <div>
       <h2>Connection Status:</h2>
       <p id="connection-status">not connected</p>
+      <p id="calibration-status">not calibrated</p>
       <button id="reconnect">Reconnect</button>
       <button id="disconnect">Disconnect</button>
-      <button id="calibrate">Calibrate</button>
     </div>
     <div class="card" id="log"></div>
     <div id="charts"></div>
@@ -40,9 +40,7 @@ document.querySelector("#disconnect")?.addEventListener("click", () => {
 
 const ultrasonicBuffer = new RingBuffer<number>(5)
 let scanData: Array<{ x: number; y: number }> = []
-
-let areaUnderCurve = 0
-const state = new StateMachine()
+const rotationClassifier = new RotationClassifier()
 
 function connectToWebSocket() {
   const ws = new WebSocket("ws://localhost:8080")
@@ -54,10 +52,13 @@ function connectToWebSocket() {
   })
 
   ws.addEventListener("close", () => {
-    const element = document.querySelector("#connection-status")!
-    element.textContent = "disconnected"
-    element.classList.remove("connected")
-    element.classList.add("disconnected")
+    const connectionStatus = document.querySelector("#connection-status")!
+    connectionStatus.textContent = "disconnected"
+    connectionStatus.classList.remove("connected")
+    connectionStatus.classList.add("disconnected")
+
+    const calibrationStatus = document.querySelector("#calibration-status")!
+    calibrationStatus.textContent = "not calibrated"
   })
 
   let justReceivedGyroData = false
@@ -102,8 +103,8 @@ function connectToWebSocket() {
 
         // H liveplot(chart, prefix, numbers)
         scanData = evaluateUltraSound(
-          state,
-          areaUnderCurve,
+          rotationClassifier.stateMachine,
+          rotationClassifier.areaUnderCurve,
           ultrasonicBuffer,
           scanData,
           numbers
@@ -112,11 +113,7 @@ function connectToWebSocket() {
         break
 
       case prefixes.gyro:
-        areaUnderCurve = determineRotation(chart, state, {
-          prefix,
-          rotationValue: numbers[0],
-          areaUnderCurve,
-        })
+        determineRotation(rotationClassifier, numbers[0])
 
         justReceivedGyroData = true
 
@@ -130,9 +127,3 @@ function connectToWebSocket() {
 }
 
 ws = connectToWebSocket()
-
-document.querySelector("#calibrate")?.addEventListener("click", () => {
-  for (const [_, chart] of charts.entries()) {
-    chart.calibrate()
-  }
-})
