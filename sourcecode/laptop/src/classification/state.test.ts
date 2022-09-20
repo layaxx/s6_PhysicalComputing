@@ -31,7 +31,7 @@ describe("testing StateMachine", () => {
     stateMachine.updateState(POSITION.OVER)
     stateMachine.updateState(POSITION.OVER)
     stateMachine.updateState(POSITION.OVER)
-    expect(stateMachine.state).toBe(STATE.OVER)
+    expect(stateMachine.state).toBe(STATE.OVER_STEADY)
     expect(stateMachine.isInRotation).toBe(true)
   })
 
@@ -64,25 +64,25 @@ describe("testing StateMachine", () => {
     expect(stateMachine.justStartedRotation).toBe(true)
   })
 
-  test("active rotation over", () => {
+  test("active rotation under", () => {
     stateMachine.updateState(POSITION.UNDER)
     stateMachine.updateState(POSITION.UNDER)
     stateMachine.updateState(POSITION.UNDER)
     stateMachine.updateState(POSITION.UNDER)
     stateMachine.updateState(POSITION.UNDER)
     stateMachine.updateState(POSITION.UNDER)
-    expect(stateMachine.state).toBe(STATE.UNDER)
+    expect(stateMachine.state).toBe(STATE.UNDER_STEADY)
     expect(stateMachine.isInRotation).toBe(true)
   })
 
-  test("finish rotation over via jump", () => {
+  test("finish rotation under via jump", () => {
     stateMachine.state = STATE.UNDER
     stateMachine.updateState(POSITION.OVER)
 
     expect(stateMachine.justFinishedRotation).toBe(true)
   })
 
-  test("finish rotation over", () => {
+  test("finish rotation under", () => {
     stateMachine.state = STATE.UNDER
     stateMachine.counterTime = 4
 
@@ -93,6 +93,6 @@ describe("testing StateMachine", () => {
 
     expect(stateMachine.isInRotation).toBe(false)
     expect(stateMachine.justFinishedRotation).toBe(true)
-    expect(stateMachine.state).toBe(STATE.UNDER)
+    expect(stateMachine.state).toBe(STATE.INSIDE)
   })
 })

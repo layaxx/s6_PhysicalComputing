@@ -10,7 +10,7 @@ export function formatTime(input?: Date) {
   const date = input ?? new Date()
 
   return `${formatToNDigits(date.getDate(), 2)}.${formatToNDigits(
-    date.getMonth(),
+    date.getMonth() + 1,
     2
   )}.${date.getFullYear()}-${formatToNDigits(
     date.getHours(),

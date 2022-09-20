@@ -31,7 +31,7 @@ export function getAverageWithoutOutliers(
   const factor = options?.factor ?? 2
 
   return getAverage(
-    data.filter((datum) => Math.abs(datum - mean!) < sd! * factor)
+    data.filter((datum) => Math.abs(datum - mean!) <= sd! * factor)
   )
 }
 
