@@ -10,6 +10,9 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <h1>Paths in a Labyrinth</h1>
     <h2>Junction Classification</h2>
     <div>
+      <a href="/theory.html">Theory and Visualizations</a>
+    </div>
+    <div>
       <h2>Connection Status:</h2>
       <p id="connection-status">not connected</p>
       <button id="reconnect">Reconnect</button>
