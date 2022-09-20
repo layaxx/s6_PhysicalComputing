@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeEach } from "vitest"
-import { STATE } from "./config"
+import { STATE } from "../utils/config"
 import { POSITION, StateMachine } from "./state"
 
 describe("testing StateMachine", () => {

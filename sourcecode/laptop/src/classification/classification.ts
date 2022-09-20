@@ -1,69 +1,104 @@
-import { getAverageWithoutOutliers } from "../utils/utils"
+import { getAverage } from "../utils/utils"
+import referenceEmpiric from "./data/combined.json"
 
 export enum JUNCTION {
-  X, // X Junction
-  T, // T Junction
-  C, // Corridor
+  X = "X Junction", // X Junction/
+  T = "T Junction", // T Junction
+  C = "Corridor", // Corridor
 }
 
 export type NormalizedScanData = Array<{ x: number; y: number }>
 
-export function classifyJunction(data: NormalizedScanData): JUNCTION {
-  const cornerMeasurement = getCornerMeasurement(data)
-  const estimatedPathWidth = cornerMeasurement
-    ? cornerMeasurement * 2
-    : undefined
+export function classifyJunction(data: NormalizedScanData) {
+  // TODO: filter out measurements > 400cm
 
-  // Probably useless
+  const result = [
+    {
+      type: JUNCTION.X,
+      value: getNormalizedCorrelation(data, referenceEmpiric.x),
+    },
+    {
+      type: JUNCTION.C,
+      value: getNormalizedCorrelation(data, referenceEmpiric.c),
+    },
+    {
+      type: JUNCTION.T,
+      value: getNormalizedCorrelation(data, referenceEmpiric.t),
+    },
+  ]
 
-  // Corridor: Left === right, center >> left
-
-  // T Left >> center, right >> center
-
-  // X: else ??
-
-  // Check for invalid measurements (> 400cm)
-
-  console.log(data, cornerMeasurement)
-
-  return JUNCTION.C
+  return result.sort((a, b) => b.value - a.value).map(({ type }) => type)
 }
 
-function getCornerMeasurement(data: NormalizedScanData): number | undefined {
-  const leftCorner = getMeasurement(data, 40, 50)
-  const rightCorner = getMeasurement(data, 130, 140)
+export function normalizeData(data: NormalizedScanData): NormalizedScanData {
+  const min = Math.min(...data.map(({ y }) => y))
+  const max = Math.max(...data.map(({ y }) => y - min))
 
-  if (leftCorner === undefined && rightCorner === undefined) {
-    // No valid measurement
-    return undefined
-  }
-
-  if (leftCorner === undefined) {
-    // Only right Corner measurement was valid
-    return rightCorner
-  }
-
-  if (rightCorner === undefined) {
-    // Only left Corner measurement was valid
-    return leftCorner
-  }
-
-  // Both measurements were valid, return shortest
-  return Math.min(leftCorner, rightCorner)
+  return data.map(({ x, y }) => ({ x, y: (y - min) / max }))
 }
 
-function getMeasurement(
+export function normalizeToDiscrete(
+  data: NormalizedScanData
+): NormalizedScanData {
+  return Array.from({ length: 180 }).map((_, index) => ({
+    x: index,
+    y: getAverage(
+      normalizeData(data)
+        .filter(({ x }) => Math.floor(Math.abs(x)) === index)
+        .map(({ y }) => y)
+    ),
+  }))
+}
+
+function getNormalizedCorrelation(
   data: NormalizedScanData,
-  from: number,
-  to: number
-): number | undefined {
-  const filteredData = data
-    .filter(({ x }) => x >= from && x < to)
-    .map(({ y }) => y)
+  reference: NormalizedScanData
+) {
+  const normalizedData = normalizeToDiscrete(data).map(({ y }) => y)
+  const normalizedReference = reference.map(({ y }) => y) // Is already normalized
 
-  if (filteredData.length === 0) {
-    return undefined
+  return calculateCorrelation(
+    normalizedData.filter(
+      (value, index) => Boolean(value) && Boolean(normalizedReference[index])
+    ),
+    normalizedReference.filter(
+      (value, index) => Boolean(value) && Boolean(normalizedData[index])
+    )
+  )
+}
+
+/**
+ * Calculate the Correlation between two sequences
+ * Loosely based on https://github.com/Bitvested/ta.js
+ *
+ * Length of sequences must be equal or an Error will be thrown
+ *
+ * @param sequence0: Sequence of numbers
+ * @param sequence1: Sequence of numbers
+ * @returns Correlation Factor between the two sequences
+ */
+function calculateCorrelation(sequence0: number[], sequence1: number[]) {
+  if (sequence0.length !== sequence1.length) {
+    throw new Error("Arrays of different length supplied to cor()")
   }
 
-  return getAverageWithoutOutliers(filteredData)
+  const averages = [getAverage(sequence0), getAverage(sequence1)]
+
+  let sumOfProducts = 0
+  let sumSequence0 = 0
+  let sumSequence1 = 0
+
+  for (const [i, element] of sequence0.entries()) {
+    const x = element - averages[0]
+    const y = sequence1[i] - averages[1]
+    sumOfProducts += x * y
+    sumSequence0 += x ** 2
+    sumSequence1 += y ** 2
+  }
+
+  const n = sequence0.length - 1
+  sumSequence0 = Math.sqrt(sumSequence0 / n)
+  sumSequence1 = Math.sqrt(sumSequence1 / n)
+
+  return sumOfProducts / (n * sumSequence0 * sumSequence1)
 }

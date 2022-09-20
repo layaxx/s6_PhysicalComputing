@@ -9,9 +9,13 @@ import {
   Legend,
 } from "chart.js"
 import { Scatter } from "react-chartjs-2"
-import { DBSCAN, KMEANS } from "density-clustering"
 // eslint-disable-next-line n/file-extension-in-import
-import { useRef } from "preact/hooks"
+import { useMemo, useRef } from "preact/hooks"
+import type { ChartJSOrUndefined, ChartProps } from "react-chartjs-2/dist/types"
+import {
+  classifyJunction,
+  normalizeToDiscrete,
+} from "../classification/classification"
 
 ChartJS.register(
   CategoryScale,
@@ -23,32 +27,25 @@ ChartJS.register(
   Legend
 )
 
-const colors = ["blue", "red", "green", "orange", "white", "black"]
-
-export const options = {
+export const options: ChartProps["options"] = {
   responsive: true,
+  animation: false,
 }
 
-export function Chart({ data }: { data: Array<{ x: number; y: number }> }) {
-  const chart = useRef()
+export function Chart({
+  data,
+  skip,
+}: {
+  data: Array<{ x: number; y: number }>
+  skip?: boolean
+}) {
+  const chart = useRef<ChartJSOrUndefined>()
 
-  const dbscan = new DBSCAN()
+  // TODO: write about extensibility
 
-  // 3 clusters => C or T
-  // 5 clusters => X
-  // ??
+  const classification = useMemo(() => !skip && classifyJunction(data), data)
 
-  // distance between points with same x coordinate, data normalized 0 -> 1 / lowest -> largest
-
-  // write about extensibility
-
-  const clusters = dbscan.run(
-    data.map(({ x, y }) => [x, y]),
-    10,
-    10
-  )
-
-  console.log(clusters.length)
+  data = normalizeToDiscrete(data).filter(({ y }) => Boolean(y))
 
   return (
     <>
@@ -60,46 +57,20 @@ export function Chart({ data }: { data: Array<{ x: number; y: number }> }) {
             {
               label: "Distance",
               data,
-              borderColor: "rgb(255, 99, 132)",
-              backgroundColor: "rgba(255, 99, 132, 0.5)",
+              backgroundColor: "blue",
             },
           ],
         }}
       />
-      <Scatter
-        ref={chart}
-        options={options}
-        data={{
-          datasets: clusters.map((array, index) => ({
-            label: "Cluster " + index,
-            data: array.map((idx) => data[idx]),
-            backgroundColor: colors[index],
-          })),
-        }}
-      />
 
-      <Scatter
-        ref={chart}
-        options={options}
-        data={{
-          datasets: [
-            {
-              label: "Distance",
-              data: data.map(({ x, y }) => {
-                const a = y * Math.sin(((x - 90) / 180) * Math.PI)
-                const b = y * Math.cos(((x - 90) / 180) * Math.PI)
+      <p>
+        Classification:{" "}
+        {skip ?? !classification ? "Skipped" : classification[0]}
+      </p>
 
-                return { x: a, y: b }
-              }),
-              borderColor: "rgb(255, 99, 132)",
-              backgroundColor: "rgba(255, 99, 132, 0.5)",
-            },
-          ],
-        }}
-      />
       <button
         onClick={() => {
-          console.log(chart.current.toBase64Image())
+          console.log(chart.current?.toBase64Image())
         }}
       >
         Print to console

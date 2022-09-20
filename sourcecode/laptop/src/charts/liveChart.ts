@@ -1,6 +1,6 @@
 import type { ChartConfiguration } from "chart.js"
 import {
-  bufferSize as bufferSizeDefault,
+  defaultBufferSize as bufferSizeDefault,
   colors,
   takeEveryNth,
 } from "../utils/config"

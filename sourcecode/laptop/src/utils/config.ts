@@ -1,14 +1,16 @@
 export const colors = [
-  "#FF003E", // 0 = red
-  "#E2AF56", // 1 = orangish
-  "#00B9D7", // 2 = cyan
-  "#00A06E", // 3 = green
-  "#D0D7D8", // 4 = grayish
-  "brown", // 5 = brown
-  "black", // 6 = black
+  "#ff003e", // 0 = red
+  "#537bc4", // 1 = blue
+  "#f67019", // 2 = orange
+  "#f53794", // 3 = pink
+  "#acc236", // 4 = light green
+  "#166a8f", // 5 = dark blue
+  "#00a950", // 6 = green
+  "#58595b", // 7 = gray
+  "#4dc9f6", // 8 = cyan
+  "#8549ba", // 9 = purple
 ]
-
-export const bufferSize = 50
+export const defaultBufferSize = 50
 
 export const prefixes = { gyro: "G", US: "U" }
 

@@ -3199,6 +3199,16 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
+ta.js@^1.12.0:
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/ta.js/-/ta.js-1.12.0.tgz#6add2dbb0e81a3ba8870e86a193f1500ecf48ee9"
+  integrity sha512-9A+canyn0chcDJZE9aXLDAXHPj60nnPSEfM+UvzNKtugcef0J7GJVggGTygVt7iLz7Z/0ysZyGYfGYGR/e7grA==
+
+ta.web@^1.12.0:
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/ta.web/-/ta.web-1.12.0.tgz#6f3a74bb9ca55b372f9f2c2d94d4aa238000f2a2"
+  integrity sha512-zzhIdIm3BESY/j9L4OIy4SlDxGQ2xerHHZU1+JkU7MX9FT37ouVlKNnkBL9hOBV/bQCdgHIYXCQq+S5xxW9/oQ==
+
 tapable@^0.1.8:
   version "0.1.10"
   resolved "https://registry.yarnpkg.com/tapable/-/tapable-0.1.10.tgz#29c35707c2b70e50d07482b5d202e8ed446dafd4"
