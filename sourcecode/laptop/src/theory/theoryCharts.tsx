@@ -27,11 +27,6 @@ ChartJS.register(
   Legend
 )
 
-export const options: ChartProps["options"] = {
-  responsive: true,
-  animation: false,
-}
-
 export function Chart({
   data,
   skip,
@@ -51,7 +46,10 @@ export function Chart({
     <>
       <Scatter
         ref={chart}
-        options={options}
+        options={{
+          responsive: true,
+          animation: false,
+        }}
         data={{
           datasets: [
             {

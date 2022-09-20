@@ -515,11 +515,6 @@
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.3.3.tgz#3c90752792660c4b562ad73b3fbd68bf3bc7ae07"
   integrity sha512-hC7OMnszpxhZPduX+m+nrx+uFoLkWOMiR4oa/AZF3MuSETYTZmFfJAHqZEM8MVlvfG7BEUcgvtwoCTxBp6hm3g==
 
-"@types/density-clustering@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@types/density-clustering/-/density-clustering-1.3.0.tgz#43788f753498cc1912619bbaa942b8f68a06f244"
-  integrity sha512-3dBJlxpR8vHFSA4C0JDruxl2UqdSVoP3shJdqWctaXhS+pli6NeQB2zweoRyO/QIYxgwYaAuqGTb/Henq6mvcA==
-
 "@types/eslint@^7.2.13":
   version "7.29.0"
   resolved "https://registry.yarnpkg.com/@types/eslint/-/eslint-7.29.0.tgz#e56ddc8e542815272720bb0b4ccc2aff9c3e1c78"
@@ -878,11 +873,6 @@ chart.js@^3.9.1:
   resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-3.9.1.tgz#3abf2c775169c4c71217a107163ac708515924b8"
   integrity sha512-Ro2JbLmvg83gXF5F4sniaQ+lTbSv18E+TIf2cOeiH1Iqd2PGFOtem+DUufMZsCJwFE7ywPOpfXFBwRTGq7dh6w==
 
-chartjs-chart-matrix@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/chartjs-chart-matrix/-/chartjs-chart-matrix-1.1.1.tgz#cf8b8f664ad9d3df894943c1f40c31f67219d291"
-  integrity sha512-0ZNP2Jib4GD/V8BOV1H5myB4RCmdmb3KJ8M9unhCByxojKpAiB70Z/AEc/Uy2Y01bTGLArToqzYpzBMYhDh0uw==
-
 check-error@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/check-error/-/check-error-1.0.2.tgz#574d312edd88bb5dd8912e9286dd6c0aed4aac82"
@@ -1073,11 +1063,6 @@ define-properties@^1.1.3, define-properties@^1.1.4:
   dependencies:
     has-property-descriptors "^1.0.0"
     object-keys "^1.1.1"
-
-density-clustering@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/density-clustering/-/density-clustering-1.3.0.tgz#dc9f59c8f0ab97e1624ac64930fd3194817dcac5"
-  integrity sha512-icpmBubVTwLnsaor9qH/4tG5+7+f61VcqMN3V3pm9sxxSCt2Jcs0zWOgwZW9ARJYaKD3FumIgHiMOcIMRRAzFQ==
 
 diff@^4.0.1:
   version "4.0.2"
@@ -3198,16 +3183,6 @@ supports-preserve-symlinks-flag@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
-
-ta.js@^1.12.0:
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/ta.js/-/ta.js-1.12.0.tgz#6add2dbb0e81a3ba8870e86a193f1500ecf48ee9"
-  integrity sha512-9A+canyn0chcDJZE9aXLDAXHPj60nnPSEfM+UvzNKtugcef0J7GJVggGTygVt7iLz7Z/0ysZyGYfGYGR/e7grA==
-
-ta.web@^1.12.0:
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/ta.web/-/ta.web-1.12.0.tgz#6f3a74bb9ca55b372f9f2c2d94d4aa238000f2a2"
-  integrity sha512-zzhIdIm3BESY/j9L4OIy4SlDxGQ2xerHHZU1+JkU7MX9FT37ouVlKNnkBL9hOBV/bQCdgHIYXCQq+S5xxW9/oQ==
 
 tapable@^0.1.8:
   version "0.1.10"

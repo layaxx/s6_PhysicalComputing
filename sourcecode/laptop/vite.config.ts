@@ -3,6 +3,5 @@ import preact from "@preact/preset-vite"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   plugins: [preact()],
 })
