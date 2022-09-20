@@ -90,7 +90,7 @@ int __attribute__((OS_main)) main(void)
 		if (dataReadyMPU)
 		{
 			putString("G: ");
-			I2C_read_registers(address, 67, data, 6);
+			I2C_read_registers(address, 67, data, 2);
 			putDec((data[0] << 8) | data[1]);
 			putString("\r\n");
 			dataReadyMPU = 0;
