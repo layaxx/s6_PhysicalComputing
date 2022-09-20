@@ -12,6 +12,8 @@ export class Calibration {
   constructor(bufferSize: number, shouldLivePlot = false) {
     this.#buffer = new RingBuffer(bufferSize)
 
+    document.querySelector("#calibration-status")!.textContent = "calibrating"
+
     if (shouldLivePlot) {
       this.#chart = new LiveChart("Gyroscope", {
         shouldCalibrate: true,

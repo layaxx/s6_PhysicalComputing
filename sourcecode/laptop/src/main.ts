@@ -13,7 +13,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       <a href="/theory.html">Theory and Visualizations</a>
     </div>
     <div>
-      <h2>Connection Status:</h2>
+      <h2>Status:</h2>
       <p id="connection-status">not connected</p>
       <p id="calibration-status">not calibrated</p>
       <button id="reconnect">Reconnect</button>
@@ -53,7 +53,8 @@ function connectToWebSocket() {
 
   ws.addEventListener("close", () => {
     const connectionStatus = document.querySelector("#connection-status")!
-    connectionStatus.textContent = "disconnected"
+    connectionStatus.textContent =
+      "disconnected [make sure proxy is running if this is unexpected]"
     connectionStatus.classList.remove("connected")
     connectionStatus.classList.add("disconnected")
 
