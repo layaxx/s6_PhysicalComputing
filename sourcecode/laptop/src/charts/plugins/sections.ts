@@ -1,5 +1,8 @@
 import type { Chart } from "chart.js"
 
+/**
+ * Chart.js Plugin for drawing sections at for the corners and paths
+ */
 export const sections = {
   id: "sections",
   beforeDraw(

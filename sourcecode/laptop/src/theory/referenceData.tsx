@@ -1,4 +1,4 @@
-import reference from "../classification/data/combined.json"
+import referenceData from "../classification/data/combined.json"
 import { Chart } from "./theoryCharts"
 
 export default function ReferenceData() {
@@ -6,13 +6,13 @@ export default function ReferenceData() {
     <div>
       <h2>Combined reference data</h2>
       <h3>T Junction</h3>
-      <Chart data={reference.t} skip={true} />
+      <Chart data={referenceData.t} skip={true} />
 
       <h3>X Junction</h3>
-      <Chart data={reference.x} skip={true} />
+      <Chart data={referenceData.x} skip={true} />
 
       <h3>Corridor</h3>
-      <Chart data={reference.c} skip={true} />
+      <Chart data={referenceData.c} skip={true} />
     </div>
   )
 }

@@ -1,10 +1,10 @@
-import { getAverage } from "../utils/utils"
+import { getAverage } from "../utils/statistics"
 import referenceEmpiric from "./data/combined.json"
 
 export enum JUNCTION {
-  X = "X Junction", // X Junction/
-  T = "T Junction", // T Junction
-  C = "Corridor", // Corridor
+  X = "X Junction",
+  T = "T Junction",
+  C = "Corridor",
 }
 
 export type NormalizedScanData = Array<{ x: number; y: number }>

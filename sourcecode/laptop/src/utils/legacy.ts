@@ -1,5 +1,5 @@
 import type { NormalizedScanData } from "../classification/classification"
-import { getAverageWithoutOutliers } from "./utils"
+import { getAverageWithoutOutliers } from "./statistics"
 
 // Methods in this file are not currently used anywhere, but may be helpful in the future
 

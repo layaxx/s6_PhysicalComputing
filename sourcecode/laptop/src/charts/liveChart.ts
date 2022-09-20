@@ -1,18 +1,16 @@
 import type { ChartConfiguration } from "chart.js"
-import {
-  defaultBufferSize as bufferSizeDefault,
-  colors,
-  takeEveryNth,
-} from "../utils/config"
+import { defaultBufferSize as bufferSizeDefault, colors } from "../utils/config"
 import RingBuffer from "../utils/ringbuffer"
 import { BaseChart } from "./baseChart"
 import { calibration } from "./plugins/calibration"
 
 export const charts = new Map<string, LiveChart>()
 
+/**
+ * Chart for live plotting data
+ */
 export class LiveChart extends BaseChart {
   #buffer: RingBuffer<number[]>
-  #states: RingBuffer<number>
   #prefix: string
   isCalibrated = false
   calibration: Array<{ mean: number; sd: number }> = []
@@ -39,7 +37,6 @@ export class LiveChart extends BaseChart {
     this.#bufferSize = bufferSize ?? bufferSizeDefault
     this.#buffer = new RingBuffer(this.#bufferSize)
     this.#averageBuffer = new RingBuffer(this.#average)
-    this.#states = new RingBuffer(this.#bufferSize)
 
     charts.set(key, this)
   }
@@ -49,9 +46,14 @@ export class LiveChart extends BaseChart {
     this.isCalibrated = true
   }
 
-  addDataPoint(number: number[], state = 0, shouldUpdate = true) {
+  /**
+   * Add a value for each line in the graph
+   *
+   * @param values - array of numbers. length should equal amount of lines in chart
+   */
+  addDataPoint(values: number[]) {
     if (this.#average > 1) {
-      this.#averageBuffer.push(number)
+      this.#averageBuffer.push(values)
       this.#averageCounter++
       if (this.#averageCounter % this.#average === 0) {
         const averagedValues = Array.from({
@@ -68,8 +70,7 @@ export class LiveChart extends BaseChart {
         this.#averageCounter = 1
       }
     } else {
-      this.#buffer.push(number)
-      this.#states.push(state)
+      this.#buffer.push(values)
     }
 
     this.chart.data = {
@@ -77,11 +78,11 @@ export class LiveChart extends BaseChart {
       datasets: Array.from({
         length: this.#buffer.content[0]?.length ?? 0,
       }).map((_, idx) => ({
-        label: `${this.#prefix}, every ${takeEveryNth}th`,
+        label: `${this.#prefix}, every ${this.#average}th`,
         data: this.#buffer.content.map((array, index) => ({
           x: index,
           y: array[idx],
-          color: colors[this.#states.content[index]],
+          color: colors[index],
         })),
         backgroundColor(ctx: { raw: any }) {
           return (ctx?.raw?.color || colors[idx]) as string
@@ -103,7 +104,7 @@ export class LiveChart extends BaseChart {
       }
     }
 
-    if (shouldUpdate) this.chart.update("none")
+    this.chart.update("none")
   }
 }
 

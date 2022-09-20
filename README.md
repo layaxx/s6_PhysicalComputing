@@ -8,7 +8,7 @@ Arduino Nano with MPU6050 and HC-SR04, schematic is provided in `paper`
 
 ### Software
 
-- Node.js, preferably current LTS (16.17.0)
+- Node.js, preferably current LTS (16.17.0), but 14.x should work as well
   - yarn for dependency management
   - dependencies as documented in `sourcecode/laptop/package.json`
 - AVR-GCC

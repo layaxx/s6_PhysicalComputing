@@ -2,6 +2,9 @@ import { isCorrectRotation, sdMultiplier } from "../utils/config"
 import { POSITION, StateMachine } from "./state"
 import { Calibration } from "./calibrateGyroscope"
 
+/**
+ * Tracks the data for a rotation
+ */
 export class RotationClassifier {
   stateMachine: StateMachine
   areaUnderCurve: number

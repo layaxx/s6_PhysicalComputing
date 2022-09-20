@@ -1,4 +1,3 @@
-/* eslint-disable complexity */
 import { STATE, thresholdTime } from "../utils/config"
 
 export enum POSITION {
@@ -7,6 +6,9 @@ export enum POSITION {
   INSIDE,
 }
 
+/**
+ * State Machine for classifying rotations
+ */
 export class StateMachine {
   state: STATE = STATE.INSIDE
   counterTime = 0
@@ -15,6 +17,13 @@ export class StateMachine {
   justFinishedRotation = false
   isInRotation = false
 
+  /**
+   * Update State depending on the given position, i.e. wether the current reading
+   * is above, below or in the stable zone
+   *
+   * @param position
+   */
+  // eslint-disable-next-line complexity
   updateState(position: POSITION): void {
     let hasFinishedRotation = false
     let hasStartedRotation = false

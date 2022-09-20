@@ -5,6 +5,7 @@ import { determineRotation, evaluateUltraSound } from "./handler"
 import { charts } from "./charts/liveChart"
 import { RotationClassifier } from "./classification/classifyRotation"
 
+// Setup DOM
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
     <h1>Paths in a Labyrinth</h1>
@@ -45,6 +46,7 @@ const rotationClassifier = new RotationClassifier()
 function connectToWebSocket() {
   const ws = new WebSocket("ws://localhost:8080")
   ws.addEventListener("open", () => {
+    // Update DOM if connection is established
     const element = document.querySelector("#connection-status")!
     element.textContent = "connected"
     element.classList.add("connected")
@@ -52,6 +54,7 @@ function connectToWebSocket() {
   })
 
   ws.addEventListener("close", () => {
+    // Update DOM if connection is closed/lost
     const connectionStatus = document.querySelector("#connection-status")!
     connectionStatus.textContent =
       "disconnected [make sure proxy is running if this is unexpected]"
@@ -68,11 +71,12 @@ function connectToWebSocket() {
     const data = String(event.data)
 
     if ([...data].some((char) => (char.codePointAt(0) ?? 128) > 127)) {
+      // If non-ASCII characters are received, something probably went wrong during communication
       console.error("Received Non ASCII characters", event.data)
       return
     }
 
-    // Convert to Numbers
+    // Split into Prefix and Payload
     const split = data.split(": ")
     const prefix = split.length > 1 ? split[0] : "default"
     const values = split.length > 1 ? split[1] : data
@@ -82,6 +86,7 @@ function connectToWebSocket() {
       return
     }
 
+    // Parse to Numbers
     let numbers: number[] = []
     try {
       numbers = values
@@ -92,32 +97,31 @@ function connectToWebSocket() {
       return
     }
 
-    const chart = charts.get(prefix)
-
+    // Handle Payload
     switch (prefix) {
       case prefixes.US:
         if (justReceivedGyroData) {
           // These values are not reliable, need to either be removed or replaced with an average of value before/after
           justReceivedGyroData = false
-          break
         }
 
-        // H liveplot(chart, prefix, numbers)
         scanData = evaluateUltraSound(
-          rotationClassifier.stateMachine,
-          rotationClassifier.areaUnderCurve,
+          rotationClassifier,
           ultrasonicBuffer,
           scanData,
-          numbers
+          numbers[0]
         )
 
         break
 
       case prefixes.gyro:
         determineRotation(rotationClassifier, numbers[0])
-
         justReceivedGyroData = true
 
+        break
+
+      case prefixes.debug:
+        console.warn("Received DEBUG message: " + data)
         break
       default:
         console.warn("Unknown prefix:", event.data)
@@ -127,4 +131,5 @@ function connectToWebSocket() {
   return ws
 }
 
+// Automatically connect to WebSocketServer
 ws = connectToWebSocket()

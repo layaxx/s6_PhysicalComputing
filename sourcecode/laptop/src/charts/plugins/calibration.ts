@@ -1,6 +1,10 @@
 import type { Chart } from "chart.js"
 import { sdMultiplier, colors } from "../../utils/config"
 
+/**
+ * Chart.js Plugin for drawing the calibration data on a Chart
+ * Calibration data is mean and upper/lower bounds at sd * sdMultiplier
+ */
 export const calibration = {
   id: "calibration",
   beforeDraw(

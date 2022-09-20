@@ -1,12 +1,14 @@
 import { LiveChart } from "../charts/liveChart"
 import RingBuffer from "../utils/ringbuffer"
-import { getAverage, getStandardDeviation } from "../utils/utils"
+import { getAverage, getStandardDeviation } from "../utils/statistics"
 
+/**
+ * Class for calibrating sensor data
+ */
 export class Calibration {
   #buffer: RingBuffer<number>
   isCalibrated = false
   calibration: { mean: number; sd: number } | undefined = undefined
-
   #chart: LiveChart | undefined
 
   constructor(bufferSize: number, shouldLivePlot = false) {
@@ -18,11 +20,14 @@ export class Calibration {
       this.#chart = new LiveChart("Gyroscope", {
         shouldCalibrate: true,
         average: 1,
-        bufferSize: 30,
+        bufferSize,
       })
     }
   }
 
+  /**
+   * Perform calibration, i.e. calculate mean and standard deviation for values in buffer
+   */
   calibrate() {
     const array = this.#buffer.content
 
@@ -37,6 +42,13 @@ export class Calibration {
     this.isCalibrated = true
   }
 
+  /**
+   * Add a reading point, perform calibration if buffer is full for first time
+   *
+   * Also adds point to live chart if one is set up.
+   *
+   * @param number
+   */
   addDataPoint(number: number) {
     if (this.#buffer.content.length === this.#buffer.size - 1) {
       // Calibrate

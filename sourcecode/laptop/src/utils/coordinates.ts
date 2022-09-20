@@ -1,3 +1,10 @@
+/**
+ * Convert polar coordinates to cartesian coordinates
+ *
+ * @param angle
+ * @param distance
+ * @returns object with x and y value for cartesian coordinates
+ */
 export function polarToCartesian(
   angle: number,
   distance: number
