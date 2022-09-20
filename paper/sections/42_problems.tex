@@ -11,10 +11,9 @@ by a lot, see Figure \ref{fig:log}.
 This may be due to interrupts not working properly when \IIC communication is happening, but I am not sure.
 Impact depends on the range of measurement. Section \ref{subsec:benchmark} shows that the update frequency of the ultrasonic is significantly higher than the gyroscope. Even at 2 meters distance, it is more than twice as high, which guarantees correct values even if affected values are omitted.
 Potential mitigation strategies are omitting the ultrasonic value that is received just after a gyroscope value, or replacing this value with the average of its predecessor and successor.
+For this project, I decided to simply duplicate the last received good value in this case.
 
 \begin{figure}
-
-
     \begin{minipage}{\textwidth}
         \begin{verbatim}
     Ultrasonic: 2450
@@ -36,6 +35,8 @@ Potential mitigation strategies are omitting the ultrasonic value that is receiv
     \caption{Excerpt from a Log, showing the spike}
     \label{fig:log}
 \end{figure}
+
+%TODO: maybe graph instead?
 
 \paragraph{Unknown path width}
 Classification would be much simpler if path width was known. Three distance measurements would suffice ofr classification, one at 0, one at 90 and one at 180 Degrees.

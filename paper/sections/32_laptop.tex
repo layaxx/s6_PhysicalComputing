@@ -8,6 +8,20 @@ This is especially helpful for debugging, but comes at the price of performance,
 Because a webapp cannot directly access the serial port, I wrote a proxy script, which reads from the serial port and provides received data via the WebSocket protocol.
 
 \paragraph{Detecting a Rotation}
+Detection of a $180\deg$ rotation from left to right is implemented via a state machine.
+The relevant sensor values for this detection is the X value of the gyroscope on the MPU6050.
+Because the values are not 0 even when the board is completely still, I decided to use the first 50 received values for calibration.
+This means that the board should be stable for the first about 2 seconds (see chapter \ref{sec:benchmark}) after connection with the laptop is established.
+Those values are used to calculate mean and standard deviation.
+
+If a received value is then within $x$ times the standard deviation of the mean, the platform is considered to not be turning.
+If the value is above or below the threshold, the state machine goes to the Over/Under states respectively.
+Because outliers are still possible, there are further states, namely Over_Steady and Under_Steady. 
+While in the Over/Under states, a counter is maintained, which is increased for each measurement outside the threshold and decreased if the platform is stable again.
+If the counter reaches 0, the state returns to the standard, i.e. Steady. If the counter reaches a threshold, 
+% TODO: is STEADY above/below really necessary or would Math.max do the trick??? 
+
+% TODO: include visualization of state machine 
 
 \paragraph{Capturing Ultrasound Data}
 
