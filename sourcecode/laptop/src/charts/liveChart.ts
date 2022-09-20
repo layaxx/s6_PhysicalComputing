@@ -3,8 +3,8 @@ import {
   bufferSize as bufferSizeDefault,
   colors,
   takeEveryNth,
-} from "../config"
-import RingBuffer from "../ringbuffer"
+} from "../utils/config"
+import RingBuffer from "../utils/ringbuffer"
 import { BaseChart } from "./baseChart"
 import { calibration } from "./plugins/calibration"
 

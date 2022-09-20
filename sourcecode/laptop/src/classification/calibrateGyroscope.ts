@@ -1,6 +1,6 @@
 import { LiveChart } from "../charts/liveChart"
-import RingBuffer from "../ringbuffer"
-import { getAverage, getStandardDeviation } from "../utils"
+import RingBuffer from "../utils/ringbuffer"
+import { getAverage, getStandardDeviation } from "../utils/utils"
 
 export class Calibration {
   #buffer: RingBuffer<number>

@@ -1,5 +1,5 @@
-import { isCorrectRotation, sdMultiplier } from "../config"
-import { POSITION, StateMachine } from "../state"
+import { isCorrectRotation, sdMultiplier } from "../utils/config"
+import { POSITION, StateMachine } from "./state"
 import { Calibration } from "./calibrateGyroscope"
 
 export class RotationClassifier {

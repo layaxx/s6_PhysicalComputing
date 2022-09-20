@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import { STATE, thresholdTime } from "./config"
+import { STATE, thresholdTime } from "../utils/config"
 
 export enum POSITION {
   OVER,

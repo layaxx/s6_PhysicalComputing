@@ -1,6 +1,6 @@
 import "./style.css"
-import RingBuffer from "./ringbuffer"
-import { prefixes } from "./config"
+import RingBuffer from "./utils/ringbuffer"
+import { prefixes } from "./utils/config"
 import { determineRotation, evaluateUltraSound } from "./handler"
 import { charts } from "./charts/liveChart"
 import { RotationClassifier } from "./classification/classifyRotation"

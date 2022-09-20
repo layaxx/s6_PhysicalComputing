@@ -10,6 +10,7 @@ import {
 } from "chart.js"
 import { Scatter } from "react-chartjs-2"
 import { DBSCAN, KMEANS } from "density-clustering"
+// eslint-disable-next-line n/file-extension-in-import
 import { useRef } from "preact/hooks"
 
 ChartJS.register(
@@ -58,7 +59,7 @@ export function Chart({ data }: { data: Array<{ x: number; y: number }> }) {
           datasets: [
             {
               label: "Distance",
-              data: data,
+              data,
               borderColor: "rgb(255, 99, 132)",
               backgroundColor: "rgba(255, 99, 132, 0.5)",
             },
@@ -88,7 +89,7 @@ export function Chart({ data }: { data: Array<{ x: number; y: number }> }) {
                 const a = y * Math.sin(((x - 90) / 180) * Math.PI)
                 const b = y * Math.cos(((x - 90) / 180) * Math.PI)
 
-                return { x: a, y: -b }
+                return { x: a, y: b }
               }),
               borderColor: "rgb(255, 99, 132)",
               backgroundColor: "rgba(255, 99, 132, 0.5)",
@@ -96,7 +97,11 @@ export function Chart({ data }: { data: Array<{ x: number; y: number }> }) {
           ],
         }}
       />
-      <button onClick={() => console.log(chart.current.toBase64Image())}>
+      <button
+        onClick={() => {
+          console.log(chart.current.toBase64Image())
+        }}
+      >
         Print to console
       </button>
     </>

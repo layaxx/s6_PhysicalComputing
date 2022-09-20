@@ -1,5 +1,5 @@
 import type { Chart } from "chart.js"
-import { sdMultiplier, colors } from "../../config"
+import { sdMultiplier, colors } from "../../utils/config"
 
 export const calibration = {
   id: "calibration",

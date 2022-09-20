@@ -1,11 +1,12 @@
 import { BaseChart } from "./charts/baseChart"
 import { classifyJunction } from "./classification/classification"
 import { LiveChart } from "./charts/liveChart"
-import { isCorrectRotation } from "./config"
-import type RingBuffer from "./ringbuffer"
-import type { StateMachine } from "./state"
-import { convertToMeters } from "./utils"
+import type RingBuffer from "./utils/ringbuffer"
 import type { RotationClassifier } from "./classification/classifyRotation"
+import type { StateMachine } from "./classification/state"
+import { isCorrectRotation } from "./utils/config"
+import { convertToMeters } from "./utils/utils"
+import { polarToCartesian } from "./utils/coordinates"
 
 export function liveplot(
   chart: LiveChart | undefined,

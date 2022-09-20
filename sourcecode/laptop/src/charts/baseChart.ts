@@ -1,6 +1,6 @@
 import type { ChartConfiguration } from "chart.js"
 import Chart from "chart.js/auto"
-import { colors, takeEveryNth } from "../config"
+import { colors, takeEveryNth } from "../utils/config"
 import { sections } from "./plugins/sections"
 
 export class BaseChart {
@@ -9,7 +9,7 @@ export class BaseChart {
 
   constructor(
     key: string = new Date().toISOString(),
-    config: ChartConfiguration = defaultConfig
+    config: ChartConfiguration = getDefaultConfig()
   ) {
     this.prefix = key
 
@@ -47,21 +47,19 @@ export class BaseChart {
     })
   }
 
-  draw(data: Array<{ x: number; y: number }>) {
+  draw(...datasets: Array<Array<{ x: number; y: number }>>) {
     this.chart.data = {
-      datasets: [
-        {
-          label: `${this.prefix}, every ${takeEveryNth}th`,
-          data,
-          backgroundColor: colors[0],
-        },
-      ],
+      datasets: datasets.map((data, index) => ({
+        label: `${this.prefix}`,
+        data,
+        backgroundColor: colors[index],
+      })),
     }
     this.chart.update("none")
   }
 }
 
-const defaultConfig: ChartConfiguration = {
+const getDefaultConfig = (includeSections = true): ChartConfiguration => ({
   type: "scatter",
   data: {
     labels: [],
@@ -70,5 +68,5 @@ const defaultConfig: ChartConfiguration = {
   options: {
     animation: false,
   },
-  plugins: [sections],
-}
+  plugins: includeSections ? [sections] : [],
+})
