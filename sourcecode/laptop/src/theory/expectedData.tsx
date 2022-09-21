@@ -1,12 +1,13 @@
 // eslint-disable-next-line n/file-extension-in-import
 import { useState } from "preact/hooks"
-import { Chart } from "./theoryCharts"
+import { ClassificationChart } from "./classificationChart"
 
 export default function ExpectedData() {
   const [xOffset, setXOffset] = useState(50)
   const [yOffset, setYOffset] = useState(50)
   const [lineLength, setLineLength] = useState(250)
 
+  // Performs a kind of ray tracing to simulate scan data
   const robot = { x: 600, y: 600, width: 10 }
   const width = 250
   const offset = { x: xOffset, y: yOffset }
@@ -84,7 +85,7 @@ export default function ExpectedData() {
 
   return (
     <>
-      <div class="card">
+      <div>
         <div>
           <label>
             X Offset
@@ -151,23 +152,7 @@ export default function ExpectedData() {
           style="fill:none;stroke:red;stroke-width:5"
         />
       </svg>
-      <Chart data={data}></Chart>
-      <svg width={600} height={400}>
-        {data.map(({ x, y }) => {
-          const center = { x: 300, y: 300 }
-          const a = y * Math.sin(((x - 90) / 180) * Math.PI)
-          const b = y * Math.cos(((x - 90) / 180) * Math.PI)
-          return (
-            <line
-              x1={center.x}
-              y1={center.y}
-              x2={center.x + a}
-              y2={center.y + b}
-              style="fill:none;stroke:black;stroke-width:1"
-            />
-          )
-        })}
-      </svg>
+      <ClassificationChart data={data} />
     </>
   )
 }
