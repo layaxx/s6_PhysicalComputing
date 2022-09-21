@@ -17,10 +17,10 @@ T Junction would have first and third measurement larger, second measurement equ
 a corridor would just have the second measurement greater than path width.
 My first idea was to use the distance measurements at $45\deg$ and $135\deg$, where the corners would be expected for a X Junction, to estimate this variable.
 This did not turn out to be a workable approach for several reasons.
-First, the ultrasonic sensor fails to get reliable readings for the distance if the object is at too much of an angle.
-Secondly, this approach would only be useful for X-Junctions, as the other two types do not have the corners necessary.
+First, the ultrasonic sensor fails to get reliable readings for the distance if the object is at too much of an angle. This could be mitigated by the assumption that corners are not sharp, but rounded, as may be the case with pipes. This improves corner detection greatly. A workaround for rounding corners can be seen in \ref{fig:setup}.
+Secondly, this all turned out to not matter, as it would only be useful for X-Junctions, due to the other two types not having the corners necessary.
 
-This did not turn out to be a problem after all, since classification now works based on similarity to past data and should due to normalization be somewhat independent of path width.
+With the current method of classification, based on similarity to past data, this is not needed at all as the data is normalized.
 
 \paragraph{Graphing the environment from the scan data} Probably as a result of the difficulty to get measurements at an angle, the data cannot be easily graphed to show the scanned environment.
 Considering our data consists of angles and distances, it can be understood as polar coordinates.
