@@ -1,9 +1,8 @@
 import { BaseChart } from "./charts/baseChart"
 import { charts, LiveChart } from "./charts/liveChart"
 import type RingBuffer from "./utils/ringbuffer"
-import { isCorrectRotation } from "./utils/config"
 import { convertToMeters } from "./utils/utils"
-import type { RotationClassifier } from "./classification/classifyRotation"
+import type { RotationClassifier } from "./classification/rotationClassifier"
 import {
   classifyJunction,
   normalizeData,
@@ -62,7 +61,7 @@ export function evaluateUltraSound(
     data.push({ x: Math.abs(classifier.areaUnderCurve), y: number })
   }
 
-  if (justFinishedRotation && isCorrectRotation(classifier.areaUnderCurve)) {
+  if (justFinishedRotation && classifier.isCorrectRotation()) {
     // Correct Rotation was detected: add Chart to DOM and classify Junction
     data.push({ x: Math.abs(classifier.areaUnderCurve), y: number })
     const normalizedData = data.map(({ x, y }) => ({

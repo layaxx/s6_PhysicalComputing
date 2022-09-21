@@ -22,16 +22,6 @@ export const thresholdTime = 5
 /** Threshold as Standard Deviation Multiplier indicating amplitude needed for state change */
 export const sdMultiplier = 10
 
-/** Sum needed for a rotation to be considered great enough */
-export const rotationThreshold = -500_000
-/**
- * Helper testing if a sum of values exceeds the threshold
- *
- * @param auc
- * @returns true iff auc clears threshold
- */
-export const isCorrectRotation = (auc: number) => auc < rotationThreshold
-
 /** Rotation State */
 export enum STATE {
   INSIDE /** Value is near baseline */,

@@ -10,8 +10,6 @@ export enum JUNCTION {
 export type NormalizedScanData = Array<{ x: number; y: number }>
 
 export function classifyJunction(data: NormalizedScanData) {
-  // TODO: filter out measurements > 400cm
-
   const result = [
     {
       type: JUNCTION.X,
@@ -30,7 +28,7 @@ export function classifyJunction(data: NormalizedScanData) {
   console.table(result)
 
   return result
-    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
+    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value)) // TODO: ABS OR NOT??????
     .map(({ type }) => type)
 }
 

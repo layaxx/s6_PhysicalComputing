@@ -60,3 +60,45 @@ export function convertToMeters(count: number) {
 export function convertToCentimeters(count: number) {
   return convertToMeters(count) * 100
 }
+
+/**
+ * Convert a data point from the Gyroscope sensor to an estimate of rotation speed
+ *
+ * Gyroscope is expected to be set to the +-250°/s range
+ *
+ * @param value - value from gyroscope
+ * @returns estimated rotation speed in degrees per second
+ */
+export function convertToRotationSpeed(value: number) {
+  const range = 250
+  const uncapped = (value / 2 ** 15) * range
+  return Math.max(Math.min(uncapped, range), -range)
+}
+
+/**
+ * Convert a sum of data point from the Gyroscope sensor to an estimate of rotation distance
+ *
+ * Gyroscope is expected to be set to the +-250°/s range, update frequency is expected to be 31.5 Hz
+ *
+ * @param sum - value from gyroscope
+ * @returns estimated distance in degrees
+ */
+export function convertRotationSumToAngle(sum: number) {
+  const range = 250 // I.e. +-250°/s
+  const frequency = 31.5 // Frequency of updates from MPU, empirically determined
+  return ((sum / 2 ** 15) * range) / frequency
+}
+
+/**
+ * Convert an angle to an estimate of the expected rotation sum
+ *
+ * Gyroscope is expected to be set to the +-250°/s range, update frequency is expected to be 31.5 Hz
+ *
+ * @param angle
+ * @returns estimated sum of measurements
+ */
+export function convertAngleToRotationSum(angle: number) {
+  const range = 250 // I.e. +-250°/s
+  const frequency = 31.5 // Frequency of updates from MPU, empirically determined
+  return (angle * frequency * 2 ** 15) / range
+}

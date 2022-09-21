@@ -1,4 +1,5 @@
-import { isCorrectRotation, sdMultiplier } from "../utils/config"
+import { sdMultiplier } from "../utils/config"
+import { convertRotationSumToAngle } from "../utils/utils"
 import { POSITION, StateMachine } from "./state"
 import { Calibration } from "./calibrateGyroscope"
 
@@ -14,6 +15,15 @@ export class RotationClassifier {
     this.stateMachine = new StateMachine()
     this.calibration = new Calibration(50, false)
     this.areaUnderCurve = 0
+  }
+
+  isCorrectRotation() {
+    const lowerBound = 170
+    const upperBound = 190
+
+    const angle = convertRotationSumToAngle(this.areaUnderCurve)
+
+    return lowerBound <= angle && angle <= upperBound
   }
 
   addDatapoint(datum: number) {
@@ -44,7 +54,7 @@ export class RotationClassifier {
 
       if (this.stateMachine.justFinishedRotation) {
         console.log("Detected Rotation")
-        if (isCorrectRotation(this.areaUnderCurve)) {
+        if (this.isCorrectRotation()) {
           console.log("Detected Correct Rotation")
         }
       }
