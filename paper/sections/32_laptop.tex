@@ -25,7 +25,7 @@ While in the $Over$ or $Over\_Steady$ states, if value significantly under mean 
 Start of rotation is therefore detected when the state changes away from $Steady$ and end of rotation upon returning to $Steady$.
 For detecting the length of rotation, the sensor values are summed up while state is not $Steady$.
 After a rotation ends, this value can be compared against thresholds to determine what direction this turn was (corresponds to the sign of the sum) and how big the turn was (corresponds to the absolute value of the sum).
-Given the known frequency and sensitivity of the sensor, this sum can also easily be turned into an estimate of distance of rotation, see Equation \ref{eq:angle}. For this project, range is 250, since the sensor is configured to use the $\pm50\deg\\s$ range. Frequency was determined to be 31.5, see \ref{subsec:benchmark}.
+Given the known frequency and sensitivity of the sensor, this sum can also easily be turned into an estimate of distance of rotation, see Equation \ref{eq:angle}. For this project, range is 250, since the sensor is configured to use the $\pm250\deg\\s$ range. Frequency was determined to be 31.5, see \ref{subsec:benchmark}.
 
 \begin{equation}
     (sum * range) / (2 ^{15}  * frequency)
