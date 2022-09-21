@@ -2,8 +2,14 @@
 \label{sec:analysis}
 
 \paragraph{Detection of turns}
-% TODO: this
+Detection of turns works very well. The thresholds for detecting a turn from left to right, i.e. a $180\deg$ clockwise turn, have been set to $-170\deg$ and $-210\deg$.
+When a the end of a turn is detected, and the sum of the turn translates to a value between those bounds, the turn is deemed to have been valid, i.e. a turn from left to right.
+The target of $180\deg$ is not at the center of the interval, because experiments showed it to work more reliable that way.
+Reliability in this context refers to the detection rate for turns that feel like they should have been valid.
+Because the direction of the turn is regarded as well, measurements can be easily taken and the platform can be rotated back to its initial position without triggering a new measurement (if the platform is turned counter-clockwise in order to go back to the initial position).
+
 
 \paragraph{Detection of Junctions}
 % TODO: this
-To help with debugging this, the webapp also includes a section that can generate expected scan data and run the junction detection on this data. This is the same utility that was used to generate the theoretic data before, see %TODO: add ref
+To help with debugging this, the webapp also includes a section that can generate expected scan data and run the junction detection on this data. This is the same utility that was used to generate the theoretic data before, see \ref{fig:theory}.
+The classification with the generated data as input pretty reliably, apart from the corridor scenario, which is sometimes misclassified as X Junction when the corridor width is too small.

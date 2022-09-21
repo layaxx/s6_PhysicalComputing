@@ -6,8 +6,7 @@ Its purpose is to configure the sensors, monitor them for new data and relay tha
 Communication with the MPU6050 sensor happens via the Inter-Integrated Circuit (\IIC) protocol.
 Communication with the laptop uses a serial connection via USB at a BAUD rate of 250000.
 
-
-The main control logic for the micro controller is quite simple. Upon startup, all ports and sensors are configured.
+The main control logic for the micro controller is quite simple. Upon startup, all ports and sensors are configured and the clock is initialized.
 Then, a infinite loop is started, which relays sensor data to the laptop if a new value is available.
 Availability of new sensor data is determined via interrupts.
 
@@ -25,3 +24,5 @@ the difference of times, i.e. the duration the echo pin has been high, can be se
 
 To simplify evaluation at the laptop side, values are sent with a prefix indicating the type of sensor,
 followed by a colon, a space, the value to be transmitted and a line break sequence.
+
+While the readings from the ultrasonic sensor are dependant on temperature, corrections for this are not in scope for this project, as we are not interested in exact distances but rather in the ratio between distances at various angles.

@@ -48,6 +48,7 @@ Due in part to the variable update rate, which is discussed in Section \ref{subs
 This is done by using the sum of gyroscope readings starting from the beginning of rotation as x-coordinate for the current distance reading.
 The total sum of gyroscope readings for a rotation then corresponds to $180\deg$ and other values can be scaled accordingly.
 While the gyroscope readings give a speed of rotation rather than a distance, a Sum should still work given the very steady frequency of updates from the MPU (see chapter \ref{subsec:benchmark}).
+Due to this normalization, a steady speed rotation is not required for detection. The scan is however more reliable when performed slower, because more points are measured and combined.
 For distance of rotation would be speed of rotation multiplied by time, if we have constant time a simple sum should suffice.
 Distances are also scaled to a range between 0 and 1 for the shortest and longest measured distance respectively.
 
@@ -98,3 +99,5 @@ Regardless of classification method is used, upon classifying the Junction the w
 The code can easily be modified to include different handlers for the sensor data.
 The best place for this is the switch statement in the main.ts file, where the prefix is used to differentiate between sensor types.
 For example, the code includes a function that can be used to live-plot values as soon as they arrive.
+
+The junction classification could also easily be modified to not only return the sorted list of junction types, but also the correlation values, which could be used as confidence values.
