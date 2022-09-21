@@ -61,13 +61,29 @@ function getNormalizedCorrelation(
   const normalizedData = normalizeToDiscrete(data).map(({ y }) => y)
   const normalizedReference = reference.map(({ y }) => y) // Is already normalized
 
-  return calculateCorrelation(
-    normalizedData.filter(
-      (value, index) => Boolean(value) && Boolean(normalizedReference[index])
-    ),
-    normalizedReference.filter(
-      (value, index) => Boolean(value) && Boolean(normalizedData[index])
+  const normalizedFilteredData = normalizedData.filter(
+    (value, index) => Boolean(value) && Boolean(normalizedReference[index])
+  )
+  const normalizedFilteredReference = normalizedReference.filter(
+    (value, index) => Boolean(value) && Boolean(normalizedData[index])
+  )
+
+  if (normalizedFilteredData.length !== normalizedFilteredReference.length) {
+    console.error("Failed to get correlation due to inconsistent length")
+    return 0
+  }
+
+  if (normalizedFilteredData.length < 40) {
+    console.error(
+      "Failed to get correlation due to insufficient data:",
+      normalizedFilteredData.length
     )
+    return 0
+  }
+
+  return calculateCorrelation(
+    normalizedFilteredData,
+    normalizedFilteredReference
   )
 }
 
