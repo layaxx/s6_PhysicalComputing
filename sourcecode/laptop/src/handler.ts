@@ -72,7 +72,7 @@ export function evaluateUltraSound(
 
     console.log("DETECTION COMPLETED")
 
-    const classification = classifyJunction(data)
+    const classification = classifyJunction(normalizedData)
 
     new BaseChart(JSON.stringify(classification)).draw(
       normalizeData(normalizedData)
