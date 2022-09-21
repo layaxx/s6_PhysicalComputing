@@ -2,9 +2,6 @@
 
 The following sections discusses some of the problems I faced, and solutions or mitigations I employed.
 
-%\paragraph{Distances >= 2m}
-%Distances of 2 meters or above are sometimes recognized as 1m. I do not know why this is, and it mostly works again after a reset. 16 Bit Clock time of arduino should allow for distances of up to about 5.5 meters, which is well above the maximum distance of the ultrasonic sensor, which is 4 meters.
-
 \paragraph{Incorrect Ultrasonic Measurements during \IIC communication}
 During an earlier stage of the project, Ultrasonic measurement received immediately after Gyroscope reading were off
 by a lot.
@@ -25,5 +22,22 @@ Secondly, this approach would only be useful for X-Junctions, as the other two t
 
 This did not turn out to be a problem after all, since classification now works based on similarity to past data and should due to normalization be somewhat independent of path width.
 
+\paragraph{Graphing the environment from the scan data} Probably as a result of the difficulty to get measurements at an angle, the data cannot be easily graphed to show the scanned environment.
+Considering our data consists of angles and distances, it can be understood as polar coordinates.
+Therefore, converting it to cartesian coordinates and plotting those should give a pretty good image of the junction.
+This works very well in theory, but not as well with values actually measured by the sensors, see Figure \ref{fig:cartesian}.
+This is not of much importance to the overall project, but would have been helpful for visualization.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\linewidth]{figures/cartesian_simulated.png}
+    \includegraphics[width=0.45\linewidth]{figures/cartesian_actual.png}
+    \caption{Left: simulated data, converted to cartesian coordinates and
+        graphed.
+        Right: actual data, converted to cartesian coordinates and graphed.
+        Notice the missing sections, that are mostly obstacles at an angle.}
+
+    \label{fig:cartesian}
+\end{figure}
+
 \paragraph{Turns are not detected correctly} When a turn ends, the calculated angle is logged to the console. If this is off, the most likely reason for this that the platform was not stable during calibration. To fix this, simply reload the app and make sure the platform does not turn for one or two seconds, until the calibration is done.
-% TODO: environment cannot be generated from scan data?

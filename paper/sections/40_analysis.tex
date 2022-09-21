@@ -10,6 +10,9 @@ Because the direction of the turn is regarded as well, measurements can be easil
 
 
 \paragraph{Detection of Junctions}
-% TODO: this
-To help with debugging this, the webapp also includes a section that can generate expected scan data and run the junction detection on this data. This is the same utility that was used to generate the theoretic data before, see \ref{fig:theory}.
+Overall, detection works pretty well in the scenarios I tested.
+If misclassifications happened, it was mostly with the X Junction.
+This is probably due to the higher variance a X Junction has compared with the other two types.
+
+To help with debugging classification, the webapp also includes a section that can generate expected scan data and run the junction detection on this data. This is the same utility that was used to generate the theoretic data before, see \ref{fig:theory}.
 The classification with the generated data as input pretty reliably, apart from the corridor scenario, which is sometimes misclassified as X Junction when the corridor width is too small.
