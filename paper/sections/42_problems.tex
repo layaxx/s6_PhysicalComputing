@@ -7,8 +7,8 @@ The following sections discusses some of the problems I faced, and solutions or 
 
 \paragraph{Incorrect Ultrasonic Measurements during \IIC communication}
 During an earlier stage of the project, Ultrasonic measurement received immediately after Gyroscope reading were off
-by a lot. 
-While this does not seem to be an issue anymore, I am neither sure what caused this nor why it works now. 
+by a lot.
+While this does not seem to be an issue anymore, I am neither sure what caused this nor why it works now.
 Potential mitigation strategies for this would have been laptop sided, were values received right after gyroscope data
 could either be dropped or substituted by a suitable average.
 
@@ -24,3 +24,5 @@ First, the ultrasonic sensor fails to get reliable readings for the distance if 
 Secondly, this approach would only be useful for X-Junctions, as the other two types do not have the corners necessary.
 
 This did not turn out to be a problem after all, since classification now works based on similarity to past data and should due to normalization be somewhat independent of path width.
+
+% TODO: environment cannot be generated from scan data?
