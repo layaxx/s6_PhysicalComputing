@@ -68,7 +68,7 @@ export function Chart({
 
       <button
         onClick={() => {
-          console.log(chart.current?.data)
+          console.log(chart.current?.toBase64Image())
         }}
       >
         Print to console
