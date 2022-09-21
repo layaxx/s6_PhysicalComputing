@@ -18,8 +18,14 @@ If a received value is then within $x$ times the standard deviation of the mean,
 If the value is above or below the threshold, the state machine goes to the Over/Under states respectively.
 Because outliers are still possible, there are further states, namely Over_Steady and Under_Steady. 
 While in the Over/Under states, a counter is maintained, which is increased for each measurement outside the threshold and decreased if the platform is stable again.
-If the counter reaches 0, the state returns to the standard, i.e. Steady. If the counter reaches a threshold, 
-% TODO: is STEADY above/below really necessary or would Math.max do the trick??? 
+If the counter reaches 0, the state returns to the standard, i.e. Steady. If the counter reaches a threshold, the state changes to Over_Steady or Under_Steady depending on previous state.
+While these additional states are not currently utilized, they allow to further customize the detection behavior.
+
+While in the Over or Over_Steady states, if value significantly under mean is detected, state is instantly reverted back to Steady and the current rotation ends.
+
+Start of rotation is therefore detected when the state changes away from Steady and end of rotation upon returning to Steady.
+For detecting the length of rotation, the sensor values are summed up while state is not Steady.
+After a rotation ends, this value can be compared against thresholds to determine what direction this turn was (corresponds to the sign of the sum) and how big the turn was (corresponds to the absolute value of the sum).
 
 % TODO: include visualization of state machine 
 
@@ -29,5 +35,10 @@ If the counter reaches 0, the state returns to the standard, i.e. Steady. If the
 Due in part to the variable update rate, which is discussed in Section \ref{subsec:benchmark}, the captured readings need to be normalized.
 This is done by using the sum of gyroscope readings starting from the beginning of rotation as x-coordinate for the current distance reading.
 The total sum of gyroscope readings for a rotation then corresponds to $180\deg$ and other values can be scaled accordingly.
+While the gyroscope readings give a speed of rotation rather than a distance, a Sum should still work given the very steady frequency of updates from the MPU (see chapter \ref{benchmark}).
+For distance of rotation would be speed of rotation multiplied by time, if we have constant time a simple sum should suffice.
+Distances are also scaled to a range between 0 and 1 for the shortest and longest measured distance respectively.
+
+% TODO: describe problem with graphing environment
 
 \paragraph{Evaluating Data}
