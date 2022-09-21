@@ -5,7 +5,7 @@ import { convertToMeters } from "./utils/utils"
 import type { RotationClassifier } from "./classification/rotationClassifier"
 import {
   classifyJunction,
-  normalizeData,
+  normalizeDataYValues,
 } from "./classification/classification"
 
 /**
@@ -74,7 +74,7 @@ export function evaluateUltraSound(
     const classification = classifyJunction(normalizedData)
 
     new BaseChart(JSON.stringify(classification)).draw(
-      normalizeData(normalizedData)
+      normalizeDataYValues(normalizedData)
     )
 
     classifier.stateMachine.justFinishedRotation = false

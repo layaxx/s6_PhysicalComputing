@@ -25,14 +25,12 @@ export function classifyJunction(data: NormalizedScanData) {
     },
   ]
 
-  console.table(result)
-
-  return result
-    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value)) // TODO: ABS OR NOT??????
-    .map(({ type }) => type)
+  return result.sort((a, b) => b.value - a.value).map(({ type }) => type)
 }
 
-export function normalizeData(data: NormalizedScanData): NormalizedScanData {
+export function normalizeDataYValues(
+  data: NormalizedScanData
+): NormalizedScanData {
   const min = Math.min(...data.map(({ y }) => y))
   const max = Math.max(...data.map(({ y }) => y - min))
 
@@ -45,7 +43,7 @@ export function normalizeToDiscrete(
   return Array.from({ length: 180 }).map((_, index) => ({
     x: index,
     y: getAverage(
-      normalizeData(data)
+      normalizeDataYValues(data)
         .filter(({ x }) => Math.floor(Math.abs(x)) === index)
         .map(({ y }) => y)
     ),
@@ -99,8 +97,6 @@ function calculateCorrelation(sequence0: number[], sequence1: number[]) {
   if (sequence0.length !== sequence1.length) {
     throw new Error("Arrays of different length supplied to cor()")
   }
-
-  console.log(sequence0.length)
 
   const averages = [getAverage(sequence0), getAverage(sequence1)]
 
