@@ -9,6 +9,12 @@ export enum JUNCTION {
 
 export type NormalizedScanData = Array<{ x: number; y: number }>
 
+/**
+ * Takes a set of scan data and classifies it into the 3 Junction Types
+ *
+ * @param data
+ * @returns ordered list of Junction Types. The earlier a type appears, the better it fits
+ */
 export function classifyJunction(data: NormalizedScanData) {
   const result = [
     {
@@ -28,6 +34,12 @@ export function classifyJunction(data: NormalizedScanData) {
   return result.sort((a, b) => b.value - a.value).map(({ type }) => type)
 }
 
+/**
+ * Normalized the y data in a dataset to the range of 0 to 1
+ *
+ * @param data
+ * @returns data with normalized y data
+ */
 export function normalizeDataYValues(
   data: NormalizedScanData
 ): NormalizedScanData {
@@ -37,6 +49,13 @@ export function normalizeDataYValues(
   return data.map(({ x, y }) => ({ x, y: (y - min) / max }))
 }
 
+/**
+ * Takes a dataset and returns a normalized version,
+ * where there is one measurement per angle for a total of 180 measurements
+ *
+ * @param data
+ * @returns the discrete normalized dataset
+ */
 export function normalizeToDiscrete(
   data: NormalizedScanData
 ): NormalizedScanData {
@@ -50,10 +69,21 @@ export function normalizeToDiscrete(
   }))
 }
 
+/**
+ * Calculates the Correlation between the two datasets
+ *
+ * The both datasets are expected to be normalized on x and y axis.
+ * The reference dataset is also expected to have already been normalized to discrete x values.
+ *
+ *
+ * @param data - the scan data
+ * @param reference - the discrete reference data
+ * @returns correlation between the datasets
+ */
 function getNormalizedCorrelation(
   data: NormalizedScanData,
   reference: NormalizedScanData
-) {
+): number {
   const normalizedData = normalizeToDiscrete(data).map(({ y }) => y)
   const normalizedReference = reference.map(({ y }) => y) // Is already normalized
 
@@ -85,7 +115,7 @@ function getNormalizedCorrelation(
 
 /**
  * Calculate the Correlation between two sequences
- * Loosely based on https://github.com/Bitvested/ta.js
+ * Loosely based on https://github.com/Bitvested/ta.js which I could not get to work
  *
  * Length of sequences must be equal or an Error will be thrown
  *
