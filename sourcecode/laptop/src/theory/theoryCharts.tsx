@@ -11,7 +11,7 @@ import {
 import { Scatter } from "react-chartjs-2"
 // eslint-disable-next-line n/file-extension-in-import
 import { useMemo, useRef } from "preact/hooks"
-import type { ChartJSOrUndefined, ChartProps } from "react-chartjs-2/dist/types"
+import type { ChartJSOrUndefined } from "react-chartjs-2/dist/types"
 import {
   classifyJunction,
   normalizeToDiscrete,

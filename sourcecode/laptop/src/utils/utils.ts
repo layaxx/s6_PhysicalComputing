@@ -38,6 +38,7 @@ export function formatToNDigits(number: number, digits: number) {
 /**
  * Convert a data point from the Ultrasonic sensor to a distance estimate
  *
+ * Since the sensor is rated for up to 4m, larger values will be capped at 4m
  * Note: Does not account for temperature.
  *
  * @param count - count received from Arduino clock
@@ -45,7 +46,7 @@ export function formatToNDigits(number: number, digits: number) {
  */
 export function convertToMeters(count: number) {
   const time = (count * 8) / 16_000_000
-  return (time * 340) / 2
+  return Math.min((time * 340) / 2, 4)
 }
 
 /**

@@ -18,6 +18,8 @@ export class RotationClassifier {
 
   addDatapoint(datum: number) {
     if (this.calibration.isCalibrated) {
+      datum -= this.calibration.calibration?.mean ?? 0
+
       const { mean, sd } = this.calibration.calibration!
 
       const upperBound = mean + sdMultiplier * sd

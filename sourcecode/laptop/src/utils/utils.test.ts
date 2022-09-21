@@ -42,8 +42,8 @@ describe("convertToMeters", () => {
     expect(convertToMeters(10_000)).toBeCloseTo(0.85)
   })
 
-  test("works as expected for larger values", () => {
-    expect(convertToMeters(123_456)).toBeCloseTo(10.493_77)
+  test("caps for larger values", () => {
+    expect(convertToMeters(123_456)).toBeCloseTo(4)
   })
 })
 
@@ -56,7 +56,7 @@ describe("convertToCentimeters", () => {
     expect(convertToCentimeters(10_000)).toBe(85)
   })
 
-  test("works as expected for larger values", () => {
-    expect(convertToCentimeters(123_456)).toBeCloseTo(1049.377)
+  test("caps larger values", () => {
+    expect(convertToCentimeters(123_456)).toBeCloseTo(400)
   })
 })

@@ -65,8 +65,6 @@ function connectToWebSocket() {
     calibrationStatus.textContent = "not calibrated"
   })
 
-  let justReceivedGyroData = false
-
   ws.addEventListener("message", function (event) {
     const data = String(event.data)
 
@@ -100,11 +98,6 @@ function connectToWebSocket() {
     // Handle Payload
     switch (prefix) {
       case prefixes.US:
-        if (justReceivedGyroData) {
-          // These values are not reliable, need to either be removed or replaced with an average of value before/after
-          justReceivedGyroData = false
-        }
-
         scanData = evaluateUltraSound(
           rotationClassifier,
           ultrasonicBuffer,
@@ -116,8 +109,6 @@ function connectToWebSocket() {
 
       case prefixes.gyro:
         determineRotation(rotationClassifier, numbers[0])
-        justReceivedGyroData = true
-
         break
 
       case prefixes.debug:

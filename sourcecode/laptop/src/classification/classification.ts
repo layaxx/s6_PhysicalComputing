@@ -27,7 +27,11 @@ export function classifyJunction(data: NormalizedScanData) {
     },
   ]
 
-  return result.sort((a, b) => b.value - a.value).map(({ type }) => type)
+  console.table(result)
+
+  return result
+    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
+    .map(({ type }) => type)
 }
 
 export function normalizeData(data: NormalizedScanData): NormalizedScanData {

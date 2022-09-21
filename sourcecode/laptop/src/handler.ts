@@ -4,6 +4,7 @@ import type RingBuffer from "./utils/ringbuffer"
 import { isCorrectRotation } from "./utils/config"
 import { convertToMeters } from "./utils/utils"
 import type { RotationClassifier } from "./classification/classifyRotation"
+import { classifyJunction } from "./classification/classification"
 
 /**
  * Handler that can be used to plot values as they come in.
@@ -69,7 +70,7 @@ export function evaluateUltraSound(
 
     console.log("DETECTION COMPLETED")
 
-    // TODO: classify Junction here
+    console.log(classifyJunction(data))
 
     classifier.stateMachine.justFinishedRotation = false
   }
