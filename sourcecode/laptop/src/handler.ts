@@ -64,6 +64,7 @@ export function evaluateUltraSound(
   if (justFinishedRotation && classifier.isCorrectRotation()) {
     // Correct Rotation was detected: add Chart to DOM and classify Junction
     data.push({ x: Math.abs(classifier.rotationSum), y: number })
+
     const normalizedData = data.map(({ x, y }) => ({
       x: (x / Math.abs(classifier.rotationSum)) * 180,
       y: convertToMeters(y),

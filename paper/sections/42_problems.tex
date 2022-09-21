@@ -25,4 +25,5 @@ Secondly, this approach would only be useful for X-Junctions, as the other two t
 
 This did not turn out to be a problem after all, since classification now works based on similarity to past data and should due to normalization be somewhat independent of path width.
 
+\paragraph{Turns are not detected correctly} When a turn ends, the calculated angle is logged to the console. If this is off, the most likely reason for this that the platform was not stable during calibration. To fix this, simply reload the app and make sure the platform does not turn for one or two seconds, until the calibration is done.
 % TODO: environment cannot be generated from scan data?
