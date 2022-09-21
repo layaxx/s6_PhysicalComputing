@@ -16,12 +16,12 @@ In the main loop, this variable is checked, and if it is one, the x value of the
 After sending the data to the laptop via the serial interface, the variable is then reset to 0.
 
 For the Ultrasonic sensor, interrupts are used to determine logic level changes on the pin that is connected to the echo signal of the sensor.
-Upon activating the sensor, the interrupt is first fired when the echo signal goes high. 
+Upon activating the sensor, the interrupt is first fired when the echo signal goes high.
 Once that happens, the current value of the 16 Bit counter, which is enabled and set to the 8 times prescaler, is saved.
-The next time the interrupt is triggered will be when the echo signal goes back down. 
+The next time the interrupt is triggered will be when the echo signal goes back down.
 When this happens, the timer value is saved again and another variable is set to one. Analogous to reading the MPU,
 this variable is used inside the main loop to determine the availability of sensor data. If this variable is set,
 the difference of times, i.e. the duration the echo pin has been high, can be sent to the laptop.
 
-To simplify evaluation at the laptop side, values are sent with a prefix indicating the type of sensor, 
-followed by a colon, a space, the value to be transmitted and a line break sequence. 
+To simplify evaluation at the laptop side, values are sent with a prefix indicating the type of sensor,
+followed by a colon, a space, the value to be transmitted and a line break sequence.

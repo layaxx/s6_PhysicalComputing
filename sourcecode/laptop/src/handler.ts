@@ -58,14 +58,14 @@ export function evaluateUltraSound(
 
   if (isInRotation) {
     // During rotation, add data points
-    data.push({ x: Math.abs(classifier.areaUnderCurve), y: number })
+    data.push({ x: Math.abs(classifier.rotationSum), y: number })
   }
 
   if (justFinishedRotation && classifier.isCorrectRotation()) {
     // Correct Rotation was detected: add Chart to DOM and classify Junction
-    data.push({ x: Math.abs(classifier.areaUnderCurve), y: number })
+    data.push({ x: Math.abs(classifier.rotationSum), y: number })
     const normalizedData = data.map(({ x, y }) => ({
-      x: (x / Math.abs(classifier.areaUnderCurve)) * 180,
+      x: (x / Math.abs(classifier.rotationSum)) * 180,
       y: convertToMeters(y),
     }))
 

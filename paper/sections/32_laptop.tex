@@ -11,25 +11,31 @@ Because a webapp cannot directly access the serial port, I wrote a proxy script,
 Detection of a $180\deg$ rotation from left to right is implemented via a state machine.
 The relevant sensor values for this detection is the X value of the gyroscope on the MPU6050.
 Because the values are not 0 even when the board is completely still, I decided to use the first 50 received values for calibration.
-This means that the board should be stable for the first about 2 seconds (see chapter \ref{sec:benchmark}) after connection with the laptop is established.
+This means that the board should be stable for the first about 2 seconds (see chapter \ref{subsec:benchmark}) after connection with the laptop is established.
 Those values are used to calculate mean and standard deviation.
 
-If a received value is then within $x$ times the standard deviation of the mean, the platform is considered to not be turning.
-If the value is above or below the threshold, the state machine goes to the Over/Under states respectively.
-Because outliers are still possible, there are further states, namely Over_Steady and Under_Steady. 
-While in the Over/Under states, a counter is maintained, which is increased for each measurement outside the threshold and decreased if the platform is stable again.
-If the counter reaches 0, the state returns to the standard, i.e. Steady. If the counter reaches a threshold, the state changes to Over_Steady or Under_Steady depending on previous state.
+If a received value is within $x$ times the standard deviation of the mean, the platform is considered to not be turning.
+If the value is above or below the threshold, the state machine goes to the $Over$/$Under$ states respectively.
+While in the $Over$/$Under$ states, a counter is maintained, which is increased for each measurement outside the threshold and decreased if the platform is stable again.
+If the counter reaches 0, the state returns to the standard, i.e. $Steady$. If the counter reaches a threshold, the state changes to $Over_Steady$ or $Under_Steady$ depending on previous state.
 While these additional states are not currently utilized, they allow to further customize the detection behavior.
 
-While in the Over or Over_Steady states, if value significantly under mean is detected, state is instantly reverted back to Steady and the current rotation ends.
+While in the $Over$ or $Over_Steady$ states, if value significantly under mean is detected, state is instantly reverted back to $Steady$ and the current rotation ends. Same thing happens for values significantly over mean while in $Under$ or $Under_Steady$ state
 
-Start of rotation is therefore detected when the state changes away from Steady and end of rotation upon returning to Steady.
-For detecting the length of rotation, the sensor values are summed up while state is not Steady.
+Start of rotation is therefore detected when the state changes away from $Steady$ and end of rotation upon returning to Steady.
+For detecting the length of rotation, the sensor values are summed up while state is not $Steady$.
 After a rotation ends, this value can be compared against thresholds to determine what direction this turn was (corresponds to the sign of the sum) and how big the turn was (corresponds to the absolute value of the sum).
+Given the known frequency and sensitivity of the sensor, this sum can also easily be turned into an estimate of distance of rotation, see Equation \ref{eq:angle}. For this project, range is 250, since the sensor is configured to use the $\pm50\deg\\s$ range. Frequency was determined to be 31.5, see \ref{subsec:benchmark}.
+
+\begin{equation}
+    ((sum / 2 ** 15) * range) / frequency
+    \label{eq:angle}
+\end{equation}
 
 % TODO: include visualization of state machine 
 
 \paragraph{Capturing Ultrasound Data}
+Every reading of the ultrasonic reading that comes in while the device is in rotation is saved together with the current angle of rotation, i.e. the sum of gyroscope readings. Additionally, a buffer is kept to include the last n (5) values once the start of a turn is recognized.
 
 \paragraph{Normalizing Data}
 Due in part to the variable update rate, which is discussed in Section \ref{subsec:benchmark}, the captured readings need to be normalized.
@@ -42,3 +48,12 @@ Distances are also scaled to a range between 0 and 1 for the shortest and longes
 % TODO: describe problem with graphing environment
 
 \paragraph{Evaluating Data}
+Once the end of a turn is registered by the state machine, we have all the data necessary to evaluate the junction at hand.
+Classification happens by comparing the List of ${x,y}$ objects, where $x$ is the normalized angle and $y$ the normalized distance, to known profiles of T-Junctions, X-Junctions and Corridors.
+
+For this, the data is converted to a discrete array. For every integer x from 0 to 180, all data points are collected whose angle starts with x. Then, the average of their distance measurement is calculated. This leaves us with a list of up to 180 numbers, as not every angle may have been recorded. We now calculate the correlation between this series and a series of reference value for each of the junction types, where missing data in either series is removed from both.
+
+This leaves us with correlation values for each junction type and we can return a list of junction types sorted by how likely this type is to correspond with our observation. This means that the first value in the returned list is the best fit and therefore our evaluation result.
+
+For the reference data, I first wanted to use theoretically computed data % TODO: see fig x
+, however this did not work well. Therefore I decided to use empiric data created by adding measurements from several scans together and normalizing them.

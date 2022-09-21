@@ -8,20 +8,20 @@ import { Calibration } from "./calibrateGyroscope"
  */
 export class RotationClassifier {
   stateMachine: StateMachine
-  areaUnderCurve: number
+  rotationSum: number
   calibration: Calibration
 
   constructor() {
     this.stateMachine = new StateMachine()
     this.calibration = new Calibration(50, false)
-    this.areaUnderCurve = 0
+    this.rotationSum = 0
   }
 
   isCorrectRotation() {
-    const lowerBound = 170
-    const upperBound = 190
+    const lowerBound = -210
+    const upperBound = -170
 
-    const angle = convertRotationSumToAngle(this.areaUnderCurve)
+    const angle = convertRotationSumToAngle(this.rotationSum)
 
     return lowerBound <= angle && angle <= upperBound
   }
@@ -45,15 +45,17 @@ export class RotationClassifier {
       this.stateMachine.updateState(position)
 
       if (this.stateMachine.justStartedRotation) {
-        this.areaUnderCurve = datum
+        this.rotationSum = datum
       }
 
       if (this.stateMachine.isInRotation) {
-        this.areaUnderCurve += datum
+        this.rotationSum += datum
       }
 
       if (this.stateMachine.justFinishedRotation) {
-        console.log("Detected Rotation")
+        console.log("Detected Rotation", {
+          angle: convertRotationSumToAngle(this.rotationSum),
+        })
         if (this.isCorrectRotation()) {
           console.log("Detected Correct Rotation")
         }
@@ -62,6 +64,6 @@ export class RotationClassifier {
       this.calibration.addDataPoint(datum)
     }
 
-    return this.areaUnderCurve
+    return this.rotationSum
   }
 }

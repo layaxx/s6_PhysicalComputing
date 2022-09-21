@@ -69,7 +69,7 @@ function getNormalizedCorrelation(
     return 0
   }
 
-  if (normalizedFilteredData.length < 40) {
+  if (normalizedFilteredData.length < 30) {
     console.error(
       "Failed to get correlation due to insufficient data:",
       normalizedFilteredData.length
