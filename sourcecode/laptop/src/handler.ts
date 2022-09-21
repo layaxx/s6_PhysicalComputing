@@ -4,7 +4,10 @@ import type RingBuffer from "./utils/ringbuffer"
 import { isCorrectRotation } from "./utils/config"
 import { convertToMeters } from "./utils/utils"
 import type { RotationClassifier } from "./classification/classifyRotation"
-import { classifyJunction } from "./classification/classification"
+import {
+  classifyJunction,
+  normalizeData,
+} from "./classification/classification"
 
 /**
  * Handler that can be used to plot values as they come in.
@@ -66,11 +69,14 @@ export function evaluateUltraSound(
       x: (x / Math.abs(classifier.areaUnderCurve)) * 180,
       y: convertToMeters(y),
     }))
-    new BaseChart().draw(normalizedData)
 
     console.log("DETECTION COMPLETED")
 
-    console.log(classifyJunction(data))
+    const classification = classifyJunction(data)
+
+    new BaseChart(JSON.stringify(classification)).draw(
+      normalizeData(normalizedData)
+    )
 
     classifier.stateMachine.justFinishedRotation = false
   }

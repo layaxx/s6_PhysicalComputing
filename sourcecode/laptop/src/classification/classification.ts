@@ -86,6 +86,8 @@ function calculateCorrelation(sequence0: number[], sequence1: number[]) {
     throw new Error("Arrays of different length supplied to cor()")
   }
 
+  console.log(sequence0.length)
+
   const averages = [getAverage(sequence0), getAverage(sequence1)]
 
   let sumOfProducts = 0
