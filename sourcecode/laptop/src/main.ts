@@ -19,7 +19,6 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       <button id="reconnect">Reconnect</button>
       <button id="disconnect">Disconnect</button>
     </div>
-    <div class="card" id="log"></div>
     <div id="charts"></div>
   </div>
 `

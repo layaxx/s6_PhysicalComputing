@@ -36,8 +36,6 @@ export function Chart({
 }) {
   const chart = useRef<ChartJSOrUndefined>()
 
-  // TODO: write about extensibility
-
   const classification = useMemo(() => !skip && classifyJunction(data), data)
 
   data = normalizeToDiscrete(data).filter(({ y }) => Boolean(y))
